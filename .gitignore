@@ -1,3 +1,5 @@
 # macOS 元数据
 .DS_Store
 *.DS_Store
+# Windows 保留设备名（误生成的 NUL 文件）
+NUL
