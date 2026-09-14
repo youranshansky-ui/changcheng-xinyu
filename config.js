@@ -85,7 +85,7 @@ export const DIGITAL_HUMANS = [
     description: '我守望长城入海处，带你见证巨龙入海的壮阔景象。',
     talkBtn: '与龙龙对话',
     avatarImage: 'images/4.png',
-    viduUrl: 'https://www.vidu.cn/vidu-stream/live-pro?avatar_id=3440884070178909&live_id=21480711596012161',
+    viduUrl: 'https://www.vidu.cn/vidu-stream/share-avatar/3440884070178909',
     exampleQuestions: [
       '老龙头为什么被称为“长城入海的地方”？',
       '老龙头长城有哪些独特的建筑？',
