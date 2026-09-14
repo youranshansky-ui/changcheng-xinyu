@@ -1,0 +1,2494 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长城·龙魂 · 山海关砖石间的巨龙</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden;
+  background:#050708; font-family:'STSong','SimSun','Noto Serif SC',serif; }
+
+/* 全屏共享 canvas —— 位于最底层，scissor 分区渲染 */
+#stage {
+  position:fixed; inset:0; width:100vw; height:100vh;
+  z-index:1; pointer-events:auto;
+}
+
+#slides { position:fixed; inset:0; z-index:5; pointer-events:none; }
+.slide {
+  position:absolute; inset:0;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.9s ease;
+}
+.slide.active { opacity:1; }
+.slide.active .interactive { pointer-events:auto; }
+
+/* ═══ 页 0 标题 ═══ */
+#slide-0 { display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; }
+.title-overlay { position:relative; z-index:10; display:flex; flex-direction:column; align-items:center; }
+.title-en-top {
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:9px; letter-spacing:8px; text-transform:uppercase;
+  color:rgba(184,208,224,0.44); margin-bottom:28px;
+  opacity:0; transition:opacity 1.2s;
+}
+.title-en-top.show { opacity:1; }
+.title-zh {
+  font-size:46px; letter-spacing:14px; line-height:1.2;
+  color:rgba(232,236,240,0.94);
+  text-shadow:0 0 60px rgba(120,160,200,0.42), 0 0 120px rgba(60,90,130,0.20);
+  opacity:0; transform:translateY(20px);
+  transition:opacity 1.4s ease, transform 1.4s ease;
+}
+.title-zh.show { opacity:1; transform:none; }
+.title-divider {
+  width:0; height:1px; margin:26px 0;
+  background:linear-gradient(90deg, transparent, rgba(184,208,224,0.65), transparent);
+  transition:width 1s ease 0.3s;
+}
+.title-divider.show { width:340px; }
+.title-sub {
+  font-family:'Garamond','Georgia',serif;
+  font-size:11px; letter-spacing:5px; text-transform:uppercase;
+  color:rgba(200,216,232,0.50);
+  opacity:0; transition:opacity 1s ease 0.6s;
+}
+.title-sub.show { opacity:1; }
+.title-museum {
+  margin-top:52px;
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:8px; letter-spacing:6px; text-transform:uppercase;
+  color:rgba(180,196,212,0.34);
+  opacity:0; transition:opacity 1s ease 0.9s;
+}
+.title-museum.show { opacity:1; }
+.title-hint {
+  margin-top:62px;
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:8px; letter-spacing:4px; text-transform:uppercase;
+  color:rgba(180,196,212,0.26);
+  opacity:0; transition:opacity 1s ease 1.8s;
+  animation: pulse 2.8s ease-in-out infinite 3s;
+}
+.title-hint.show { opacity:1; }
+@keyframes pulse { 0%,100%{opacity:0.24} 50%{opacity:0.55} }
+
+/* ═══ 页 1-9 文物：左半屏文字层 ═══ */
+.text-pane {
+  position:absolute; left:0; top:0;
+  width:50vw; height:100vh;
+  padding:0 44px 0 8vw;
+  display:flex; flex-direction:column; justify-content:center; align-items:flex-end;
+  text-align:right;
+  overflow:hidden;
+  background:linear-gradient(to right,
+    rgba(5,7,8,0.94) 0%, rgba(5,7,8,0.85) 72%, rgba(5,7,8,0) 100%);
+}
+.text-pane::after {
+  content:''; position:absolute; right:0; top:15%; bottom:15%; width:1px;
+  background:linear-gradient(to bottom,
+    transparent, rgba(184,208,224,0.34) 30%, rgba(184,208,224,0.34) 70%, transparent);
+}
+
+.a-label {
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:9px; letter-spacing:5px; text-transform:uppercase;
+  color:rgba(184,208,224,0.56); margin-bottom:18px; opacity:0;
+  transition:opacity 1s;
+  align-self:flex-end;
+}
+.a-label.in { opacity:1; }
+.a-title {
+  font-size:30px; letter-spacing:7px; line-height:1.4;
+  color:rgba(232,236,240,0.94);
+  text-shadow:0 0 30px rgba(120,160,200,0.36);
+  margin-bottom:6px; min-height:1.4em;
+  align-self:flex-end;
+}
+.a-sub {
+  font-family:'Garamond','Georgia',serif;
+  font-size:11px; letter-spacing:4px; text-transform:uppercase;
+  color:rgba(200,216,232,0.44); margin-bottom:32px; min-height:1em;
+  align-self:flex-end;
+}
+.draw-line {
+  height:1px; width:0;
+  background:linear-gradient(90deg,transparent,rgba(184,208,224,0.60));
+  margin-bottom:24px; transition:width 0.8s ease;
+  align-self:flex-end;
+}
+.draw-line.drawn { width:100%; }
+.a-meta { margin-bottom:24px; width:100%; }
+.m-row {
+  display:flex; align-items:baseline; margin-bottom:9px;
+  opacity:0; transform:translateY(8px);
+  transition:opacity 0.5s, transform 0.5s;
+}
+.m-row.in { opacity:1; transform:none; }
+.m-key {
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:10px; letter-spacing:3px; text-transform:uppercase;
+  color:rgba(180,200,220,0.52); width:68px; flex-shrink:0;
+}
+.m-dot {
+  flex:1; border-bottom:1px dotted rgba(180,200,220,0.20);
+  margin:0 10px; position:relative; top:-3px;
+}
+.m-val { font-size:14px; letter-spacing:2px; color:rgba(228,236,244,0.84); text-align:left; }
+.a-desc-wrap {
+  border-right:2px solid rgba(184,208,224,0.30);
+  padding-right:16px; margin-bottom:28px;
+  align-self:stretch;
+}
+.a-desc {
+  font-size:13px; line-height:2.1; color:rgba(220,228,236,0.76); min-height:4em;
+  text-align:right;
+}
+.a-desc.en {
+  font-family:'Garamond','Georgia',serif;
+  font-size:12.5px; line-height:2.0; color:rgba(212,224,236,0.70);
+}
+.lang-row {
+  display:flex; gap:10px; opacity:0; transition:opacity 0.5s;
+  align-self:flex-end;
+}
+.lang-row.in { opacity:1; }
+.lang-btn {
+  padding:5px 16px; background:transparent;
+  border:1px solid rgba(184,208,224,0.30); border-radius:2px;
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:rgba(184,208,224,0.48); cursor:pointer; transition:all 0.2s;
+}
+.lang-btn.active {
+  background:rgba(184,208,224,0.16); border-color:rgba(184,208,224,0.62);
+  color:rgba(240,244,248,0.94);
+}
+
+/* ═══ 页 10 尾页覆盖层 ═══ */
+#slide-10 { display:flex; align-items:center; justify-content:center; flex-direction:column; }
+.finale-overlay {
+  position:absolute; inset:0; z-index:10;
+  display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+  padding:60px 0 100px;
+  pointer-events:none;
+}
+.finale-top { display:flex; flex-direction:column; align-items:center; }
+.finale-top-label {
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:8px; letter-spacing:7px; text-transform:uppercase;
+  color:rgba(184,208,224,0.48); margin-bottom:16px;
+  opacity:0; transition:opacity 1s;
+}
+.finale-top-label.in { opacity:1; }
+.finale-title {
+  font-size:30px; letter-spacing:10px; color:rgba(232,236,240,0.94);
+  text-shadow:0 0 40px rgba(120,160,200,0.36);
+  margin-bottom:12px; min-height:1.4em; text-align:center;
+}
+.finale-sub {
+  font-family:'Garamond','Georgia',serif;
+  font-size:10px; letter-spacing:5px; text-transform:uppercase;
+  color:rgba(200,216,232,0.42); text-align:center;
+  min-height:1em;
+}
+.finale-bottom { display:flex; flex-direction:column; align-items:center; width:100%; }
+.finale-divider {
+  width:0; height:1px; margin:0 auto 22px;
+  background:linear-gradient(90deg,transparent,rgba(184,208,224,0.55),transparent);
+  transition:width 1.2s ease;
+}
+.finale-divider.drawn { width:640px; }
+.finale-desc {
+  max-width:840px; text-align:center;
+  font-size:13.5px; line-height:2.2; color:rgba(220,228,236,0.72);
+  padding:0 40px;
+}
+
+/* ═══ NAV & CURSOR ═══ */
+#nav {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+  display:flex; gap:8px; z-index:100;
+}
+.nav-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:rgba(184,208,224,0.26); transition:all 0.4s;
+  cursor:pointer;
+}
+.nav-dot.active { background:rgba(184,208,224,0.82); transform:scale(1.4); }
+
+#scroll-hint {
+  position:fixed; bottom:20px; right:36px;
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:8px; letter-spacing:4px; text-transform:uppercase;
+  color:rgba(180,196,212,0.28); z-index:100; pointer-events:none;
+  opacity:0; transition:opacity 1s;
+}
+#scroll-hint.show { opacity:1; }
+
+.cursor::after {
+  content:'|'; animation:blink 0.9s step-end infinite;
+  color:rgba(184,208,224,0.80);
+}
+@keyframes blink { 50%{opacity:0} }
+
+/* loading */
+#global-loading {
+  position:fixed; inset:0; z-index:200;
+  background:#050708;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:rgba(232,236,240,0.72); font-size:14px; letter-spacing:6px;
+  transition:opacity 0.8s;
+}
+#global-loading.done { opacity:0; pointer-events:none; }
+.load-bar {
+  margin:18px auto 0; width:240px; height:1px;
+  background:rgba(232,236,240,0.12); position:relative; overflow:hidden;
+}
+.load-bar::after {
+  content:''; position:absolute; left:-60%; top:0; width:60%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(232,236,240,0.62),transparent);
+  animation:scan 1.4s linear infinite;
+}
+@keyframes scan { to{left:100%} }
+</style>
+
+<style>
+/* ═══════════════ 三段式体验 · 新增样式 ═══════════════ */
+.hidden { display:none !important; }
+#nav, #scroll-hint { display:none !important; }
+
+/* 通用阶段层 */
+.phase {
+  position:fixed; inset:0;
+  opacity:0; visibility:hidden;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+.phase.active { opacity:1; visibility:visible; }
+
+/* ── 序章 ── */
+#phase-prologue {
+  z-index:300; background:
+    radial-gradient(120% 90% at 50% 0%, rgba(60,90,130,.16), rgba(5,7,8,0) 55%),
+    radial-gradient(80% 60% at 50% 110%, rgba(40,60,86,.14), rgba(5,7,8,0) 60%),
+    #050708;
+  display:flex; align-items:center; justify-content:center;
+}
+.prologue-inner {
+  max-width:760px; padding:0 40px; text-align:center;
+  display:flex; flex-direction:column; align-items:center;
+}
+.prologue-en {
+  font-family:'Helvetica Neue',sans-serif;
+  font-size:9px; letter-spacing:7px; text-transform:uppercase;
+  color:rgba(184,208,224,.40); margin-bottom:30px;
+}
+.prologue-title {
+  font-size:52px; letter-spacing:16px; font-weight:400;
+  color:rgba(232,236,240,.94);
+  text-shadow:0 0 60px rgba(120,160,200,.40), 0 0 140px rgba(60,90,130,.18);
+  line-height:1.2;
+}
+.prologue-divider {
+  width:0; height:1px; margin:30px 0;
+  background:linear-gradient(90deg,transparent,rgba(184,208,224,.60),transparent);
+  animation:dividerIn 1.2s ease .4s forwards;
+}
+@keyframes dividerIn { to{width:340px} }
+.prologue-subtitle {
+  font-size:15px; letter-spacing:6px; color:rgba(200,216,232,.62); margin-bottom:46px;
+}
+.prologue-body {
+  max-width:620px; font-size:14px; line-height:2.3;
+  color:rgba(216,226,236,.72); text-align:justify; text-align-last:center;
+}
+.start-btn {
+  margin-top:52px; padding:13px 52px;
+  background:transparent; cursor:pointer;
+  border:1px solid rgba(184,208,224,.38); border-radius:2px;
+  font-family:'STSong','SimSun','Noto Serif SC',serif;
+  font-size:15px; letter-spacing:6px; color:rgba(232,236,240,.88);
+  transition:all .35s ease;
+}
+.start-btn:hover {
+  background:rgba(184,208,224,.10); border-color:rgba(184,208,224,.72);
+  box-shadow:0 0 30px rgba(120,160,200,.18); letter-spacing:9px;
+}
+
+/* ── 构境 · 跳过按钮 ── */
+#skip-btn {
+  position:fixed; top:24px; right:30px; z-index:160;
+  padding:7px 20px; background:rgba(5,7,8,.28); cursor:pointer;
+  border:1px solid rgba(184,208,224,.26); border-radius:2px;
+  font-family:'STSong','SimSun','Noto Serif SC',serif;
+  font-size:12px; letter-spacing:4px; color:rgba(200,216,232,.62);
+  opacity:0; visibility:hidden; transition:all .5s ease; backdrop-filter:blur(4px);
+}
+#skip-btn.active { opacity:1; visibility:visible; }
+#skip-btn:hover { border-color:rgba(184,208,224,.6); color:rgba(240,244,248,.92); }
+
+/* ── 音乐控制 · 静音/播放（全程可见，位于跳过按钮左侧）── */
+#music-btn {
+  position:fixed; top:24px; right:110px; z-index:320;
+  padding:7px 20px; background:rgba(5,7,8,.28); cursor:pointer;
+  border:1px solid rgba(184,208,224,.26); border-radius:2px;
+  font-family:'STSong','SimSun','Noto Serif SC',serif;
+  font-size:12px; letter-spacing:4px; color:rgba(200,216,232,.62);
+  transition:all .5s ease; backdrop-filter:blur(4px);
+}
+#music-btn:hover { border-color:rgba(184,208,224,.6); color:rgba(240,244,248,.92); }
+#music-btn.muted { color:rgba(184,208,224,.42); border-color:rgba(184,208,224,.16); }
+
+/* ── 过渡文案 ── */
+#transition-overlay {
+  position:fixed; inset:0; z-index:150;
+  background:rgba(5,7,8,.82);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition:opacity .9s ease, visibility .9s ease;
+}
+#transition-overlay.active { opacity:1; visibility:visible; }
+.transition-text div {
+  font-size:20px; letter-spacing:6px; line-height:2.4;
+  color:rgba(228,236,244,.86); text-align:center;
+  text-shadow:0 0 40px rgba(120,160,200,.30);
+}
+
+/* ── 第三阶段 · 数字人选择页 ── */
+#phase-digital {
+  z-index:300; background:
+    radial-gradient(100% 80% at 50% 0%, rgba(60,90,130,.15), rgba(5,7,8,0) 55%),
+    #050708;
+  overflow:auto;
+}
+.digital-inner {
+  min-height:100%; padding:80px 40px 60px;
+  display:flex; flex-direction:column; align-items:center;
+}
+.digital-head { text-align:center; margin-bottom:56px; }
+.digital-title {
+  font-size:34px; letter-spacing:10px; color:rgba(232,236,240,.94);
+  text-shadow:0 0 40px rgba(120,160,200,.34); line-height:1.3;
+}
+.digital-subtitle {
+  margin-top:20px; font-size:13px; letter-spacing:4px;
+  color:rgba(200,216,232,.56);
+}
+.digital-cards {
+  display:grid; grid-template-columns:repeat(2, 320px);
+  gap:30px; justify-content:center;
+  width:100%; max-width:1080px;
+}
+.human-card {
+  width:320px; max-width:100%;
+  background:linear-gradient(180deg, rgba(30,38,48,.55), rgba(12,16,20,.75));
+  border:1px solid rgba(184,208,224,.14); border-radius:4px;
+  padding:34px 28px 30px; text-align:center;
+  display:flex; flex-direction:column; align-items:center;
+  transition:transform .4s ease, border-color .4s ease, box-shadow .4s ease;
+}
+.human-card:hover {
+  transform:translateY(-6px);
+  border-color:rgba(184,208,224,.40);
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+}
+.human-avatar {
+  width:112px; height:112px; border-radius:50%; margin-bottom:24px;
+  overflow:hidden; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 50% 38%, rgba(120,160,200,.22), rgba(5,7,8,.4));
+  border:1px solid rgba(184,208,224,.22);
+}
+.human-avatar img { width:100%; height:100%; object-fit:cover; }
+.avatar-fallback {
+  font-size:38px; color:rgba(200,216,232,.6);
+  font-family:'STSong','SimSun','Noto Serif SC',serif;
+}
+.human-name { font-size:19px; letter-spacing:3px; color:rgba(236,240,244,.92); }
+.human-role {
+  margin-top:9px; font-size:12px; letter-spacing:2px; color:rgba(184,208,224,.80);
+}
+.human-location {
+  margin-top:6px; font-size:11px; letter-spacing:2px; color:rgba(184,208,224,.46);
+}
+.human-desc {
+  margin-top:18px; font-size:13px; line-height:2.0; color:rgba(216,226,236,.66);
+  min-height:4em;
+}
+.human-talk-btn {
+  margin-top:26px; padding:10px 34px;
+  background:transparent; cursor:pointer;
+  border:1px solid rgba(184,208,224,.34); border-radius:2px;
+  font-family:'STSong','SimSun','Noto Serif SC',serif;
+  font-size:13px; letter-spacing:5px; color:rgba(232,236,240,.86);
+  transition:all .3s ease;
+}
+.human-talk-btn:hover { background:rgba(184,208,224,.12); border-color:rgba(184,208,224,.66); }
+
+/* ── 对话引导弹窗 ── */
+#dialog-overlay {
+  position:fixed; inset:0; z-index:400;
+  background:rgba(3,5,6,.72); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition:opacity .35s ease, visibility .35s ease;
+  padding:20px;
+}
+#dialog-overlay.active { opacity:1; visibility:visible; }
+.dialog-box {
+  width:100%; max-width:520px;
+  background:#0b1015; border:1px solid rgba(184,208,224,.18); border-radius:6px;
+  padding:40px 38px 34px; text-align:center;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
+}
+.dialog-title { font-size:22px; letter-spacing:6px; color:rgba(236,240,244,.94); }
+.dialog-desc {
+  margin-top:18px; font-size:13.5px; line-height:2.1; color:rgba(216,226,236,.66);
+}
+.dialog-questions {
+  list-style:none; margin:28px 0 6px; text-align:left;
+}
+.dialog-questions li {
+  padding:12px 16px; margin-bottom:10px;
+  background:rgba(184,208,224,.05);
+  border:1px solid rgba(184,208,224,.12); border-radius:3px;
+  font-size:13px; letter-spacing:1px; color:rgba(220,230,238,.78); line-height:1.7;
+}
+.dialog-actions { margin-top:28px; display:flex; gap:16px; justify-content:center; }
+.dialog-btn {
+  padding:11px 30px; cursor:pointer; border-radius:2px;
+  font-family:'STSong','SimSun','Noto Serif SC',serif;
+  font-size:13px; letter-spacing:4px; transition:all .3s ease;
+}
+.dialog-btn.back {
+  background:transparent; border:1px solid rgba(184,208,224,.28); color:rgba(200,216,232,.66);
+}
+.dialog-btn.back:hover { border-color:rgba(184,208,224,.55); color:rgba(240,244,248,.9); }
+.dialog-btn.enter {
+  background:rgba(184,208,224,.14); border:1px solid rgba(184,208,224,.55); color:rgba(240,244,248,.94);
+}
+.dialog-btn.enter:hover { background:rgba(184,208,224,.24); }
+
+/* ── 返回长城构境 ── */
+#back-to-construction {
+  position:fixed; top:24px; left:24px; z-index:320;
+  background:transparent; border:none; cursor:pointer;
+  font-family:'STSong','SimSun','Noto Serif SC',serif;
+  font-size:12px; letter-spacing:3px; color:rgba(200,216,232,.56);
+  padding:0; transition:color .3s ease, opacity .3s ease;
+  opacity:0; visibility:hidden; pointer-events:none;
+}
+#back-to-construction.active { opacity:1; visibility:visible; pointer-events:auto; }
+#back-to-construction:hover { color:rgba(236,240,244,.92); }
+
+/* ── 移动端适配 ── */
+@media (max-width:768px) {
+  .prologue-title { font-size:36px; letter-spacing:10px; }
+  .prologue-body { font-size:13px; text-align:center; text-align-last:center; }
+  .digital-inner { padding:60px 20px 40px; }
+  .digital-title { font-size:26px; letter-spacing:6px; }
+  .digital-cards { grid-template-columns:1fr; gap:20px; }
+  .human-card { max-width:100%; }
+  .transition-text div { font-size:17px; }
+  #skip-btn { top:16px; right:16px; }
+  #music-btn { top:16px; right:96px; }
+  #back-to-construction { top:16px; left:16px; }
+  .dialog-box { max-height:86vh; overflow-y:auto; padding:30px 22px 26px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ 第一阶段 · 序章 ═══════════ -->
+<div id="phase-prologue" class="phase active">
+  <div class="prologue-inner">
+    <div class="prologue-en">Digital Interactive Experience</div>
+    <h1 class="prologue-title" id="prologue-title"></h1>
+    <div class="prologue-divider"></div>
+    <div class="prologue-subtitle" id="prologue-subtitle"></div>
+    <p class="prologue-body" id="prologue-body"></p>
+    <button class="start-btn" id="start-btn"></button>
+  </div>
+</div>
+
+<canvas id="stage"></canvas>
+
+<div id="global-loading" class="hidden">
+  长城·龙魂 · 加载中
+  <div class="load-bar"></div>
+  <div id="load-status" style="margin-top:12px;font-size:10px;letter-spacing:3px;color:rgba(232,236,240,0.44)">正在加载模型…</div>
+</div>
+
+<div id="slides">
+
+  <!-- Slide 0 -->
+  <div class="slide active" id="slide-0">
+    <div class="title-overlay">
+      <div class="title-zh" id="t-zh">河北长城文化数字化展陈</div>
+      <div class="title-divider" id="t-div"></div>
+      <div class="title-museum" id="t-museum">河北 · 长城 · 数字化展陈</div>
+      <div class="title-hint" id="t-hint">点击 或 滚动 继续 →</div>
+    </div>
+  </div>
+
+  <!-- Slide 1 - 老龙头正面 -->
+  <div class="slide" id="slide-1">
+    <div class="text-pane interactive" id="at-1">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(1,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(1,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 2 - 角山长城远景 -->
+  <div class="slide" id="slide-2">
+    <div class="text-pane interactive" id="at-2">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(2,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(2,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3 - 大境门 -->
+  <div class="slide" id="slide-3">
+    <div class="text-pane interactive" id="at-3">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(3,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(3,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4 - 将军楼 -->
+  <div class="slide" id="slide-4">
+    <div class="text-pane interactive" id="at-4">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(4,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(4,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5 - 大金山楼 -->
+  <div class="slide" id="slide-5">
+    <div class="text-pane interactive" id="at-5">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(5,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(5,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6 - 小金山楼 -->
+  <div class="slide" id="slide-6">
+    <div class="text-pane interactive" id="at-6">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(6,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(6,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7 - 字模印文砖 -->
+  <div class="slide" id="slide-7">
+    <div class="text-pane interactive" id="at-7">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(7,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(7,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8 - 龙形砖雕 -->
+  <div class="slide" id="slide-8">
+    <div class="text-pane interactive" id="at-8">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(8,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(8,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9 - 龙首砖雕细部 -->
+  <div class="slide" id="slide-9">
+    <div class="text-pane interactive" id="at-9">
+      <div class="a-label">Shanhaiguan · Great Wall Heritage</div>
+      <div class="a-title"></div><div class="a-sub"></div>
+      <div class="draw-line"></div>
+      <div class="a-meta">
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+        <div class="m-row"><span class="m-key"></span><span class="m-dot"></span><span class="m-val"></span></div>
+      </div>
+      <div class="draw-line"></div>
+      <div class="a-desc-wrap"><div class="a-desc"></div></div>
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang(9,'zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang(9,'en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10 Finale -->
+  <div class="slide" id="slide-10">
+    <div class="finale-overlay">
+      <div class="finale-top">
+        <div class="finale-top-label" id="f-label">Epilogue</div>
+        <div class="finale-title" id="f-title"></div>
+        <div class="finale-sub" id="f-sub"></div>
+      </div>
+      <div class="finale-bottom">
+        <div class="finale-divider" id="f-div"></div>
+        <div class="finale-desc" id="f-desc"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="nav">
+  <div class="nav-dot active"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+  <div class="nav-dot"></div>
+</div>
+<div id="scroll-hint">Click or scroll to navigate</div>
+
+<!-- ═══════════ 构境 · 跳过按钮 ═══════════ -->
+<button id="skip-btn">跳过</button>
+
+<!-- ═══════════ 音乐控制 · 静音/播放 ═══════════ -->
+<button id="music-btn" title="静音 / 播放">静音</button>
+
+<!-- ═══════════ 数字人页 · 返回构境 ═══════════ -->
+<button id="back-to-construction"></button>
+
+<!-- ═══════════ 构境 → 新语 过渡文案 ═══════════ -->
+<div id="transition-overlay">
+  <div class="transition-text" id="transition-text"></div>
+</div>
+
+<!-- ═══════════ 第三阶段 · 数字人选择页 ═══════════ -->
+<div id="phase-digital" class="phase">
+  <div class="digital-inner">
+    <div class="digital-head">
+      <div class="digital-title" id="digital-title"></div>
+      <div class="digital-subtitle" id="digital-subtitle"></div>
+    </div>
+    <div class="digital-cards" id="digital-cards"></div>
+  </div>
+</div>
+
+<!-- ═══════════ 数字人体验引导弹窗 ═══════════ -->
+<div id="dialog-overlay">
+  <div class="dialog-box">
+    <div class="dialog-title" id="dialog-title"></div>
+    <div class="dialog-desc" id="dialog-desc"></div>
+    <ul class="dialog-questions" id="dialog-questions"></ul>
+    <div class="dialog-actions">
+      <button class="dialog-btn back" id="dialog-back"></button>
+      <button class="dialog-btn enter" id="dialog-enter"></button>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three":         "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { SITE_TEXT, DIGITAL_HUMANS } from './config.js';
+
+await MeshoptDecoder.ready;
+
+// ═══════════════════════════ DATA (4 件长城主题文物 + Finale) ═══════════════════════════
+// 长城砖石 —— 青砖冷灰
+const PALETTE_BRICK = [
+  [0.42, 0.44, 0.46],  // 青砖冷灰
+  [0.56, 0.55, 0.52],  // 石灰缝
+  [0.32, 0.34, 0.36],  // 深砖阴影
+  [0.68, 0.66, 0.60],  // 风化黄
+  [0.48, 0.50, 0.52],  // 亮青砖
+  [0.24, 0.24, 0.26],  // 铁锈黑
+];
+// 老龙头 —— 石砌+海蓝+浪白
+const PALETTE_SEA_STONE = [
+  [0.46, 0.50, 0.54],  // 灰石
+  [0.30, 0.44, 0.58],  // 海蓝
+  [0.68, 0.78, 0.86],  // 浪花白
+  [0.38, 0.42, 0.44],  // 深石
+  [0.22, 0.34, 0.48],  // 深海
+  [0.82, 0.86, 0.90],  // 泡沫亮
+];
+// 角山长城 —— 山青+石灰+云雾
+const PALETTE_MOUNTAIN = [
+  [0.44, 0.52, 0.44],  // 山青
+  [0.60, 0.66, 0.58],  // 山灰
+  [0.34, 0.40, 0.36],  // 深林
+  [0.72, 0.76, 0.72],  // 云雾白
+  [0.56, 0.60, 0.52],  // 干草黄
+  [0.28, 0.32, 0.30],  // 岩阴
+];
+// 龙首砖雕 —— 砖赭+青苔
+const PALETTE_DRAGON = [
+  [0.50, 0.46, 0.40],  // 赭砖
+  [0.42, 0.50, 0.42],  // 青苔
+  [0.66, 0.60, 0.50],  // 亮砖
+  [0.30, 0.28, 0.24],  // 缝隙深
+  [0.72, 0.68, 0.58],  // 风化亮
+  [0.36, 0.40, 0.36],  // 苔深
+];
+// 关楼/敌楼 —— 灰砖+土黄+屋檐赭
+const PALETTE_TOWER = [
+  [0.48, 0.46, 0.42],  // 灰砖
+  [0.62, 0.56, 0.44],  // 土黄
+  [0.36, 0.32, 0.28],  // 檐深
+  [0.72, 0.66, 0.52],  // 亮墙
+  [0.54, 0.50, 0.44],  // 石灰
+  [0.28, 0.26, 0.24],  // 缝隙
+];
+// 字模印文砖 —— 单色青砖+墨痕
+const PALETTE_BRICK_INK = [
+  [0.44, 0.44, 0.44],  // 青砖灰
+  [0.58, 0.56, 0.52],  // 风化亮
+  [0.22, 0.22, 0.20],  // 墨痕
+  [0.66, 0.62, 0.56],  // 米砖
+  [0.34, 0.34, 0.34],  // 深阴
+  [0.48, 0.48, 0.46],  // 中灰
+];
+
+const ARTIFACTS = [
+  {
+    file: '老龙头正面_3Dhigh/老龙头正面_3Dhigh.glb',
+    palette: PALETTE_SEA_STONE,
+    entryType: 'bottomUpY',           // 城墙自海面而起
+    dissipateType: 'seaCrash',        // 海浪拍岸：城基向下沉入海、垛口飞散成浪花
+    zh: {
+      title:'老龙头',
+      sub:'Old Dragon\'s Head · Where the Wall Meets the Sea',
+      meta:[
+        ['始建','明洪武十四年（1381）'],
+        ['修葺','戚继光 主持增筑'],
+        ['位置','河北秦皇岛 · 山海关'],
+        ['构造','入海石城 · 澄海楼'],
+        ['长度','入海约 22.4 m'],
+      ],
+      desc:'明万里长城东部起点，因城墙如巨龙探首入渤海，故名"老龙头"。石城由花岗巨石垒砌，历经风涛数百年，依然稳踞海岸。其上澄海楼三层飞檐，凭窗东望，唯见碧浪连天。\n\n戚继光戍蓟镇时，命人于此增筑入海石城与靖卤台，形成"陆海相接、水战御倭"的军事奇观。老龙头是万里长城唯一延伸入海的部分，也是长城精神最壮丽的收束。',
+    },
+    en: {
+      title:'老龙头',
+      sub:'Old Dragon\'s Head · Where the Wall Meets the Sea',
+      meta:[
+        ['Founded','1381 (Ming, Hongwu 14)'],
+        ['Rebuilt','By General Qi Jiguang'],
+        ['Location','Shanhaiguan, Hebei'],
+        ['Structure','Sea Fortress · Chenghai Tower'],
+        ['Extends','ca. 22.4 m into the sea'],
+      ],
+      desc:'The easternmost origin of the Great Wall in Ming times — named "Old Dragon\'s Head" because the wall\'s stone body plunges into the Bohai Sea like a dragon dipping its brow to drink. Built of massive granite blocks, it has withstood the tides for six centuries. Above it soars the three-tiered Chenghai Tower, gazing east across an ocean of green waves.\n\nStationed at Jizhen, General Qi Jiguang ordered the extension of the sea-wall and Jinglu Terrace, creating a hybrid land-and-sea defence against Japanese raiders. Old Dragon\'s Head is the only part of the Great Wall that reaches the sea — the most majestic finale of the Wall\'s ten-thousand-li march.',
+    },
+  },
+  {
+    file: '角山长城远景_3Dhigh/5角山长城远景_3Dhigh.glb',
+    palette: PALETTE_MOUNTAIN,
+    entryType: 'leftToRightX',        // 长城沿山脊自西向东铺展
+    dissipateType: 'mountainMist',    // 山脊蒸腾成云雾散去
+    zh: {
+      title:'角山长城',
+      sub:'Jiaoshan · First Peak of the Great Wall',
+      meta:[
+        ['位置','秦皇岛 山海关北 3.5 km'],
+        ['山系','燕山山脉东端'],
+        ['海拔','主峰 519 m'],
+        ['雅号','万里长城第一山'],
+        ['遗构','明代砖砌长城 · 栖贤寺'],
+      ],
+      desc:'角山坐落于山海关城北，为燕山山脉东伸入海前的最后一座高峰，因"双峰峥向宛若角立"而得名。它是明代万里长城自老龙头起北跨越的第一座山峰，因而素有"万里长城第一山"之称。\n\n山势嵯峨，绵延起伏，是山海关的天然屏障。明初于此建栖贤寺，历代文人多留题咏；山顶西侧有一处天然堰塞湖，湖水碧翠，四山环合，是关外少有的清幽秀色。',
+    },
+    en: {
+      title:'角山长城',
+      sub:'Jiaoshan · First Peak of the Great Wall',
+      meta:[
+        ['Location','3.5 km north of Shanhaiguan'],
+        ['Range','Eastern Yan Mountains'],
+        ['Elevation','519 m at main peak'],
+        ['Epithet','First Peak of the Great Wall'],
+        ['Sites','Ming brick wall · Qixian Temple'],
+      ],
+      desc:'Rising north of Shanhaiguan City, Jiaoshan is the final peak of the Yan Range before it plunges into the sea. Its twin summits, "sharp and lifted like horns," give the mountain its name. As the first summit crossed by the Ming Great Wall after Old Dragon\'s Head, it has long been called the "First Peak of the Wall."\n\nRugged and continuous, its ridge forms the natural bulwark of Shanhaiguan. Here in early Ming the Qixian Temple was founded, later a beloved retreat for scholar-poets. Just west of the summit lies a natural alpine lake — emerald water encircled by four green peaks, a rare pocket of stillness beyond the pass.',
+    },
+  },
+  {
+    file: '大境门_3Dhigh(1)/大境门_3Dhigh(1).glb',
+    palette: PALETTE_TOWER,
+    entryType: 'bottomUpY',
+    dissipateType: 'gateOpen',
+    zh: {
+      title:'大境门',
+      sub:'Dajingmen · The Great Frontier Gate',
+      meta:[
+        ['始建','明成化年间（15世纪）'],
+        ['扩建','清顺治元年（1644）'],
+        ['位置','河北张家口 · 万里长城'],
+        ['形制','单孔券门 · 匾额"大好河山"'],
+        ['地位','长城四大关口之一'],
+      ],
+      desc:'大境门位于张家口市区北端，坐北朝南，是明清两代京师北门户之一。城门以"境"字命名——非"关"非"隘"，寓边关之外亦是华夏疆土。门额之上"大好河山"四字为民国察哈尔都统高维岳所题，笔力雄阔。\n\n自建门起，大境门便是内地与蒙古草原贸易的咽喉，"茶马互市"数百年不绝：南来的丝绸茶砖、北下的皮毛骏马皆经此门。它是万里长城四大关口之一，也是长城由军事屏障转向民族交融通道的历史见证。',
+    },
+    en: {
+      title:'大境门',
+      sub:'Dajingmen · The Great Frontier Gate',
+      meta:[
+        ['Founded','Chenghua era, Ming (15th c.)'],
+        ['Rebuilt','Qing, Shunzhi 1 (1644)'],
+        ['Location','Zhangjiakou, Hebei'],
+        ['Form','Single-arch gate · "Grand Rivers & Mountains" tablet'],
+        ['Status','One of the Four Great Passes'],
+      ],
+      desc:'Rising at the northern edge of Zhangjiakou, Dajingmen faces south and served as one of the northern gateways to imperial Beijing under Ming and Qing rule. Its name — jing, "territory" — rather than "pass" or "barrier," proclaims that lands beyond are equally the realm of China. The four calligraphic characters on the lintel, "Grand Rivers and Mountains," were inscribed by Republic-era Chahar governor Gao Weiyue.\n\nFor centuries, Dajingmen was the throat of caravan trade between the inland and the Mongolian steppe: silk and tea flowed north, furs and horses flowed south. One of the Great Wall\'s four major gates, it witnessed the Wall\'s transformation from military bulwark to a corridor of ethnic exchange.',
+    },
+  },
+  {
+    file: '将军楼_3Dhigh/将军楼_3Dhigh.glb',
+    palette: PALETTE_TOWER,
+    entryType: 'bottomUpY',
+    dissipateType: 'towerRise',
+    zh: {
+      title:'将军楼',
+      sub:'General\'s Tower · Watchtower of Command',
+      meta:[
+        ['年代','明代（16世纪）'],
+        ['形制','空心敌楼 · 双层砖木'],
+        ['位置','河北长城 · 关隘要冲'],
+        ['功用','屯兵 · 瞭望 · 指挥'],
+        ['特征','箭窗 · 垛口 · 悬檐'],
+      ],
+      desc:'"将军楼"为明代长城敌楼中的顶阶形制，专供守边将领驻扎与指挥。楼分上下两层，下为屯兵藏械之所，上作瞭望与传令平台；四面开箭窗，可环视百里烽燧。\n\n戚继光《练兵实纪》有云："楼者，军之目也。"其墙厚砖沉，梁架松柏，历五百年寒暑而不倾。今日登楼北望，塞外苍苍，仍似闻当年"举火为信、鼓角相闻"的边防号令。',
+    },
+    en: {
+      title:'将军楼',
+      sub:'General\'s Tower · Watchtower of Command',
+      meta:[
+        ['Period','Ming (16th c.)'],
+        ['Form','Hollow watchtower · two-storey brick and timber'],
+        ['Location','Hebei · Great Wall pass'],
+        ['Use','Garrison · lookout · command post'],
+        ['Features','Arrow slits · crenellations · overhanging eaves'],
+      ],
+      desc:'The "General\'s Tower" is the highest grade of watchtower along the Ming Great Wall, reserved for commanding officers of the frontier. Two storeys tall, the lower level housed troops and weapons, while the upper served as a lookout and signal platform. Arrow slits on all four walls afforded a hundred-li survey of the beacon line.\n\nAs Qi Jiguang wrote in Records of Troop Training, "The tower is the eye of the army." Its walls are thick, its beams of pine and cypress — after five centuries they stand unbowed. Ascend it today and gaze northward into the steppe; you can almost hear the old commands: fires lit for signals, drums and horns answering across the ridge.',
+    },
+  },
+  {
+    file: '大金山楼_3Dhigh(1)/大金山楼_3Dhigh(1).glb',
+    palette: PALETTE_TOWER,
+    entryType: 'bottomUpY',
+    dissipateType: 'towerRise',
+    zh: {
+      title:'大金山楼',
+      sub:'Great Jinshan Tower',
+      meta:[
+        ['年代','明隆庆—万历（16世纪）'],
+        ['位置','河北秦皇岛 · 金山岭长城'],
+        ['形制','实心敌台 · 三券三伏'],
+        ['地位','金山岭主敌楼'],
+        ['遗构','箭窗 · 铺房 · 水槽'],
+      ],
+      desc:'大金山楼为金山岭长城两座金山楼中的正楼，因俯瞰"燕山金山"两水交汇处而得名。楼体高峻，以青砖磊砌为实心结构，取"重压不摧、雷火不塌"之意；顶部铺房仍存石础，可窥当年戍卒起居。\n\n此楼是明蓟镇总兵戚继光练兵防倭布局中的枢纽，与其东南的小金山楼隔涧相望。两楼一大一小，一实一空，配合火箭与铳炮，成"双楼互援"之防御奇观，为长城军事工程史上的极致。',
+    },
+    en: {
+      title:'大金山楼',
+      sub:'Great Jinshan Tower',
+      meta:[
+        ['Period','Ming, Longqing–Wanli (16th c.)'],
+        ['Location','Jinshanling Wall, Hebei'],
+        ['Form','Solid tower · three arches, three vaults'],
+        ['Status','Primary tower of Jinshanling'],
+        ['Remains','Arrow slits · quarters · water channel'],
+      ],
+      desc:'The Great Jinshan Tower is the principal of the two "Jinshan" watchtowers along the Jinshanling Wall — named for its command over the confluence of the two Jinshan streams beneath. Built as a solid brick block for maximum resistance to siege and lightning alike, its rooftop still shows the stone footings of the garrison quarters.\n\nUnder General Qi Jiguang, then commander of the Ji Garrison, this tower anchored a mutual-support system with the Lesser Jinshan Tower opposite: one solid, one hollow, coordinating crossbow, rocket, and cannon fire. Together they form one of the most refined defensive pairings in the entire history of Great Wall engineering.',
+    },
+  },
+  {
+    file: '小金山楼_3Dhigh/小金山楼_3Dhigh.glb',
+    palette: PALETTE_TOWER,
+    entryType: 'bottomUpY',
+    dissipateType: 'towerRise',
+    zh: {
+      title:'小金山楼',
+      sub:'Lesser Jinshan Tower',
+      meta:[
+        ['年代','明代（16世纪）'],
+        ['位置','金山岭长城 · 大金山楼西侧'],
+        ['形制','空心敌楼 · 双层砖构'],
+        ['功用','驻兵 · 瞭望 · 联防'],
+        ['特征','三券三伏 · 顶部铺房'],
+      ],
+      desc:'小金山楼位于金山岭长城之上，与大金山楼互为犄角，因体量稍小而得名。楼内设有中心柱和藏兵洞，四壁开箭窗，士兵可循木梯登临顶部铺房，居高瞭望。\n\n楼体虽小，工艺却精：券顶三层，砖缝以糯米灰浆勾抹，历五百年仍严丝合缝。它与大金山楼形成"一大一小、一实一虚"的战术组合，是明蓟镇长城"以楼为骨"防御体系的活化石。',
+    },
+    en: {
+      title:'小金山楼',
+      sub:'Lesser Jinshan Tower',
+      meta:[
+        ['Period','Ming (16th c.)'],
+        ['Location','Jinshanling · west of the Great Tower'],
+        ['Form','Hollow watchtower · two-storey brick'],
+        ['Use','Garrison · lookout · mutual defence'],
+        ['Features','Triple arch vaults · rooftop quarters'],
+      ],
+      desc:'The Lesser Jinshan Tower stands just west of its greater twin along the Jinshanling Wall, forming with it a pair of flanking strongholds. Smaller in scale, it contains a central pillar and inner chambers for stored weapons, with arrow slits on every wall and a wooden ladder rising to the rooftop quarters.\n\nModest in size but exquisite in craft, the tower\'s triple arches are bonded with sticky-rice mortar that has held its seams for five centuries. Together with the Great Tower, it forms a "large-and-small, solid-and-hollow" tactical duo — a living fossil of the Ming "tower-as-skeleton" defensive doctrine.',
+    },
+  },
+  {
+    file: '字模印文砖_3Dhigh/字模印文砖_3Dhigh.glb',
+    palette: PALETTE_BRICK_INK,
+    entryType: 'centerRadial',
+    dissipateType: 'brickShatter',
+    zh: {
+      title:'字模印文砖',
+      sub:'Inscribed Wall Brick with Kiln Mark',
+      meta:[
+        ['年代','明万历年间（16—17世纪）'],
+        ['质地','青砖 · 阳文戳印'],
+        ['尺寸','约 38 × 18 × 9 cm'],
+        ['铭文','窑户 · 匠名 · 年份'],
+        ['出处','河北长城砖构遗存'],
+      ],
+      desc:'字模印文砖为明代长城营建中的"责任制"物证——每块青砖侧面均有戳印，标明烧造窑户、监工匠头与年份。倘若砖有裂、墙有塌，可循戳印追责，故谚曰："砖砖有主，块块问名。"\n\n这块砖出自河北明代长城，戳印清晰可辨，字体端庄。它虽是万里长城中最微小的一员，却折射出一个庞大帝国的营造制度：以匠户为骨、以责任为魂，六百年不坏之城，正是由每一块可以问名的砖砌成。',
+    },
+    en: {
+      title:'字模印文砖',
+      sub:'Inscribed Wall Brick with Kiln Mark',
+      meta:[
+        ['Period','Ming, Wanli reign (16th–17th c.)'],
+        ['Material','Grey brick · raised seal impression'],
+        ['Size','ca. 38 × 18 × 9 cm'],
+        ['Inscription','Kiln · foreman · year'],
+        ['Provenance','Great Wall, Hebei'],
+      ],
+      desc:'The inscribed brick is the material evidence of the Ming "accountability system" behind the building of the Wall. Each block\'s side bears a stamped seal identifying the kiln, the foreman-mason, and the year of firing. If a brick cracked or a wall collapsed, the stamp could be traced. As the saying went: "Every brick has an owner, every block a name."\n\nThis specimen, drawn from a Ming-dynasty stretch of the Hebei Wall, still shows its stamp clearly. The humblest unit of the ten-thousand-li line, it nonetheless reveals an empire\'s system of construction — grounded in hereditary artisans and answerability. The Wall\'s six centuries of survival rest, quite literally, on bricks that can still be called by name.',
+    },
+  },
+  {
+    file: '龙正面_3Dhigh/龙正面_3Dhigh.glb',
+    palette: PALETTE_DRAGON,
+    entryType: 'centerRadial',        // 龙形砖雕：从中央向外辐射生长
+    dissipateType: 'dragonSoar',      // 龙形腾飞：整体上冲、鳞片两侧展、龙首前扑
+    zh: {
+      title:'长城砖雕·龙形构件',
+      sub:'Ming Brick Relief · Dragon Motif',
+      meta:[
+        ['年代','明中晚期（16世纪）'],
+        ['质地','青砖阴刻 / 阳雕'],
+        ['来源','山海关关城建筑构件'],
+        ['纹样','团龙 · 云气 · 卷草'],
+        ['功用','城门 · 影壁 · 屋脊装饰'],
+      ],
+      desc:'明代山海关营建之时，工匠以青砖为材，于城门与屋脊部位施以龙形浮雕。团龙盘曲、鳞片森严，须发飞扬，间衬云气与卷草，是"龙关"神话在建筑上的物象化。\n\n砖雕龙不同于宫廷宝相所用的五爪金龙——它多为四爪或三爪，姿态雄野、线条粗犷，带有边塞卫戍的力道。城砖之上一鳞一爪，皆为百姓与士卒共托边关平安之愿。',
+    },
+    en: {
+      title:'长城砖雕·龙形构件',
+      sub:'Ming Brick Relief · Dragon Motif',
+      meta:[
+        ['Period','Mid-late Ming (16th c.)'],
+        ['Material','Carved grey brick'],
+        ['Origin','Shanhaiguan Wall & gate'],
+        ['Motif','Coiled dragon · clouds · vines'],
+        ['Use','Gate · spirit wall · rooftop ridge'],
+      ],
+      desc:'When the Ming re-fortified Shanhaiguan, craftsmen worked the grey wall bricks into low-relief dragons above gates and along rooftop ridges. Coiled bodies, ranked scales, streaming whiskers and swirling clouds — the "Dragon Pass" myth given tangible form in the very stones of the frontier.\n\nUnlike the five-clawed gold dragons of the imperial court, these frontier dragons bear four or three claws — untamed in posture, coarse and powerful in line, carrying the weight of the garrison. Each scale, each claw etched into the brick was a prayer for a peaceful border — carved by soldier and mason alike.',
+    },
+  },
+  {
+    file: '龙首正面细节_3Dhigh/龙首正面细节_3Dhigh.glb',
+    palette: PALETTE_BRICK,
+    entryType: 'bottomUpY',           // 龙首从下抬起
+    dissipateType: 'dragonRoar',      // 龙嘴前喷、鬃毛两侧散、角上冲
+    zh: {
+      title:'龙首砖雕·细部',
+      sub:'Detail of the Dragon\'s Head',
+      meta:[
+        ['年代','明代（15—17世纪）'],
+        ['构件','脊头 / 影壁 龙首'],
+        ['质地','青砖细刻'],
+        ['特征','龙目圆睁 · 鬃发飘扬'],
+        ['出处','山海关砖构建筑遗存'],
+      ],
+      desc:'砖雕龙首正面细部——双目圆睁如铜铃，双角向后卷起，鬃发根根分明，鼻梁高耸，唇齿间隐现火焰纹。整块青砖打磨如金属，砖缝里仍留有六百年的黑漆与烟痕。\n\n镜头贴近之处，可见工匠一凿一凿留下的刀痕：那是明代边军家眷所在的匠户，代代相传的手艺。龙首不是宫廷玩物，而是万千戍卒抬眼可望的守护之神——它守着城门，也守着家。',
+    },
+    en: {
+      title:'龙首砖雕·细部',
+      sub:'Detail of the Dragon\'s Head',
+      meta:[
+        ['Period','Ming (15th–17th c.)'],
+        ['Element','Ridge-head / spirit-wall dragon'],
+        ['Material','Finely carved grey brick'],
+        ['Features','Wide eyes · streaming mane'],
+        ['Provenance','Shanhaiguan Wall structures'],
+      ],
+      desc:'A close view of the dragon\'s brow: round eyes glaring like bronze bells, twin horns curling back, whiskers combed one by one, a proud ridge of a nose, a hint of flame between fangs. The grey brick has been ground smooth as metal — its seams still black with six hundred years of soot and lacquer.\n\nStep closer and you can count each chisel-stroke: the hereditary craft of frontier artisans, families of the garrison, passed from father to son. This dragon was no palace ornament — it was the guardian glimpsed daily by ten thousand soldiers. It watched the gate. It watched over home.',
+    },
+  },
+];
+
+const FINALE = {
+  title: '河北长城文化数字化展陈',
+  sub: '',
+  desc: '从张家口的大境门到秦皇岛的老龙头，从角山之巅的第一座敌楼到金山岭上的双楼互援，从万砖有名的营造制度到砖雕龙首的怒目——万里长城蜿蜒于河北大地之上，既是一部石头写就的军事史，也是一幅民族融合与匠意流转的画卷。\n\n数字化不是把砖石搬进屏幕，而是把六百年间戍卒、匠人、商旅、文人所留下的呼吸重新点亮：让一块字模砖再被叫出匠户的名字，让一座敌楼再被抬头仰望，让一条巨龙再从青砖里腾起。\n\n此为河北长城文化的数字化展陈——愿观者，皆能透过粒子与光影，读见山河背后那道从未散去的长城。',
+};
+
+// ═══════════════════════════ SHARED RENDERER ═══════════════════════════
+const canvas = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0);
+renderer.setSize(innerWidth, innerHeight);
+renderer.autoClear = false;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
+
+// ═══════════════════════════ UTILS ═══════════════════════════
+function pickCol(palette, nx, ny, nz) {
+  const h = (Math.abs(nx*1317 + ny*997 + nz*631) % 1000) / 1000;
+  const [r,g,b] = palette[Math.floor(h * palette.length)];
+  const br = 0.42 + ny * 0.44;
+  return [r*br, g*br, b*br];
+}
+
+function sampleTexture(mat) {
+  if (!mat) return null;
+  const tex = mat.map || mat.emissiveMap;
+  if (!tex) return null;
+  const img = tex.image;
+  if (!img) return null;
+  const iw = img.width || img.videoWidth || (img.data && img.data.width);
+  const ih = img.height || img.videoHeight || (img.data && img.data.height);
+  if (!iw || !ih) return null;
+  try {
+    const MAX_TEX = 1024;
+    const s = Math.min(1, MAX_TEX / Math.max(iw, ih));
+    const cw = Math.max(1, Math.floor(iw * s));
+    const ch = Math.max(1, Math.floor(ih * s));
+    const canv = document.createElement('canvas');
+    canv.width = cw; canv.height = ch;
+    const ctx = canv.getContext('2d', {willReadFrequently:true});
+    ctx.drawImage(img, 0, 0, cw, ch);
+    return { data: ctx.getImageData(0, 0, cw, ch).data, w: cw, h: ch, flipY: tex.flipY !== false };
+  } catch(e) {
+    console.warn('[texture sample failed]', e.message);
+    return null;
+  }
+}
+
+function extractVerts(root, maxCount=120000) {
+  const raw = [];
+  const rawCols = [];
+  let hitTex = 0, hitVCol = 0, hitBase = 0;
+  root.updateWorldMatrix(true, true);
+  root.traverse(node => {
+    if (!node.isMesh) return;
+    node.updateWorldMatrix(true, false);
+    const pos = node.geometry.attributes.position; if (!pos) return;
+    const uv = node.geometry.attributes.uv;
+    const vCol = node.geometry.attributes.color;
+    const mat = node.material;
+    const tex = sampleTexture(mat);
+    const base = (mat && mat.color) ? [mat.color.r, mat.color.g, mat.color.b] : [0.6, 0.60, 0.58];
+    const wm = node.matrixWorld, v = new THREE.Vector3();
+    for (let i=0; i<pos.count; i++) {
+      v.fromBufferAttribute(pos, i).applyMatrix4(wm);
+      raw.push(v.x, v.y, v.z);
+      let cr=base[0], cg=base[1], cb=base[2];
+      let hit = 'base';
+      if (tex && uv && i < uv.count) {
+        const u = uv.getX(i);
+        let vv = uv.getY(i);
+        if (tex.flipY) vv = 1 - vv;
+        const uu = ((u % 1) + 1) % 1;
+        const vw = ((vv % 1) + 1) % 1;
+        const px = Math.min(tex.w-1, Math.max(0, Math.floor(uu * tex.w)));
+        const py = Math.min(tex.h-1, Math.max(0, Math.floor(vw * tex.h)));
+        const idx = (py * tex.w + px) * 4;
+        const sr = tex.data[idx  ] / 255;
+        const sg = tex.data[idx+1] / 255;
+        const sb = tex.data[idx+2] / 255;
+        cr = sr <= 0.04045 ? sr/12.92 : Math.pow((sr+0.055)/1.055, 2.4);
+        cg = sg <= 0.04045 ? sg/12.92 : Math.pow((sg+0.055)/1.055, 2.4);
+        cb = sb <= 0.04045 ? sb/12.92 : Math.pow((sb+0.055)/1.055, 2.4);
+        hit = 'tex';
+      } else if (vCol && i < vCol.count) {
+        cr = vCol.getX(i); cg = vCol.getY(i); cb = vCol.getZ(i);
+        hit = 'vcol';
+      }
+      if (hit === 'tex') hitTex++;
+      else if (hit === 'vcol') hitVCol++;
+      else hitBase++;
+      rawCols.push(cr, cg, cb);
+    }
+  });
+  console.log(`[verts] tex=${hitTex} vcol=${hitVCol} base=${hitBase}`);
+  let mnX=Infinity,mxX=-Infinity,mnY=Infinity,mxY=-Infinity,mnZ=Infinity,mxZ=-Infinity;
+  for (let i=0; i<raw.length; i+=3) {
+    if (raw[i]<mnX) mnX=raw[i]; if (raw[i]>mxX) mxX=raw[i];
+    if (raw[i+1]<mnY) mnY=raw[i+1]; if (raw[i+1]>mxY) mxY=raw[i+1];
+    if (raw[i+2]<mnZ) mnZ=raw[i+2]; if (raw[i+2]>mxZ) mxZ=raw[i+2];
+  }
+  const cx=(mnX+mxX)/2, cy=(mnY+mxY)/2, cz=(mnZ+mxZ)/2;
+  const sc = 2.2 / Math.max(mxX-mnX, mxY-mnY, mxZ-mnZ);
+  const stride = Math.max(1, Math.floor(raw.length/3/maxCount));
+  const pts = [];
+  const natCols = [];
+  for (let i=0; i<raw.length; i+=stride*3) {
+    pts.push((raw[i]-cx)*sc, (raw[i+1]-cy)*sc, (raw[i+2]-cz)*sc);
+    natCols.push(rawCols[i], rawCols[i+1], rawCols[i+2]);
+  }
+  let nyMin=Infinity,nyMax=-Infinity,nxMin=Infinity,nxMax=-Infinity;
+  let rMax = 0;
+  for (let i=0; i<pts.length; i+=3) {
+    if (pts[i+1]<nyMin) nyMin=pts[i+1]; if (pts[i+1]>nyMax) nyMax=pts[i+1];
+    if (pts[i]<nxMin) nxMin=pts[i]; if (pts[i]>nxMax) nxMax=pts[i];
+    const r = Math.sqrt(pts[i]*pts[i] + pts[i+1]*pts[i+1] + pts[i+2]*pts[i+2]);
+    if (r > rMax) rMax = r;
+  }
+  return {pts, natCols: new Float32Array(natCols), nyMin, nyMax, nyR: nyMax-nyMin||1, nxMin, nxMax, nxR: nxMax-nxMin||1, rMax: rMax||1};
+}
+
+function computeStagger(pts, entryType, d) {
+  const {nyMin, nyR, nxMin, nxR, rMax} = d;
+  const COUNT = pts.length/3;
+  const stagger = new Float32Array(COUNT);
+  for (let i=0; i<COUNT; i++) {
+    const tx=pts[i*3], ty=pts[i*3+1], tz=pts[i*3+2];
+    let t = 0;
+    if (entryType === 'bottomUpY') {
+      t = ((ty-nyMin)/nyR) * 3.2 + Math.random() * 0.22;
+    } else if (entryType === 'leftToRightX') {
+      t = ((tx-nxMin)/nxR) * 3.2 + Math.random() * 0.22;
+    } else if (entryType === 'tailToHeadX') {
+      t = ((tx-nxMin)/nxR) * 3.2 + Math.random() * 0.22;
+    } else if (entryType === 'centerRadial') {
+      const r = Math.sqrt(tx*tx + ty*ty + tz*tz);
+      t = (r / rMax) * 3.2 + Math.random() * 0.22;
+    }
+    stagger[i] = t;
+  }
+  return stagger;
+}
+
+function computeInitPos(pts, entryType) {
+  const COUNT = pts.length/3;
+  const init = new Float32Array(pts.length);
+  for (let i=0; i<COUNT; i++) {
+    const i3 = i*3;
+    const tx=pts[i3], ty=pts[i3+1], tz=pts[i3+2];
+    if (entryType === 'bottomUpY') {
+      init[i3]   = tx + (Math.random()-.5)*0.06;
+      init[i3+1] = ty - 2.4 * (0.7 + Math.random()*0.4);
+      init[i3+2] = tz + (Math.random()-.5)*0.06;
+    } else if (entryType === 'leftToRightX' || entryType === 'tailToHeadX') {
+      init[i3]   = tx - 2.4 * (0.7 + Math.random()*0.4);
+      init[i3+1] = ty + (Math.random()-.5)*0.10;
+      init[i3+2] = tz + (Math.random()-.5)*0.10;
+    } else if (entryType === 'centerRadial') {
+      const jitter = 0.08;
+      init[i3]   = (Math.random()-.5) * jitter;
+      init[i3+1] = (Math.random()-.5) * jitter;
+      init[i3+2] = (Math.random()-.5) * jitter;
+    }
+  }
+  return init;
+}
+
+function computeDissipate(pts, dissipateType, d) {
+  const COUNT = pts.length/3;
+  const vel = new Float32Array(COUNT*3);
+  const sg  = new Float32Array(COUNT);
+  for (let i=0; i<COUNT; i++) {
+    const i3 = i*3;
+    const tx=pts[i3], ty=pts[i3+1], tz=pts[i3+2];
+    const r = Math.sqrt(tx*tx + ty*ty + tz*tz) || 1;
+    const rXZ = Math.sqrt(tx*tx + tz*tz) || 0.001;
+    const normY = (ty - d.nyMin) / d.nyR;
+    const normX = (tx - d.nxMin) / d.nxR;
+    const normR = r / d.rMax;
+    let vx=0, vy=0, vz=0, delay=0;
+
+    if (dissipateType === 'seaCrash') {
+      // 老龙头：城基下沉入海、垛口高处向两侧飞散成浪花、整体向前微推
+      if (normY < 0.28) {
+        // 城基：下沉入海，微微前后颤动
+        vx = (Math.random()-.5) * 0.4;
+        vy = -0.9 - Math.random() * 0.5;
+        vz = (Math.random()-.5) * 0.4;
+      } else if (normY > 0.65) {
+        // 垛口 / 屋脊：向上飞散成浪花
+        const side = tx >= 0 ? 1 : -1;
+        vx = side * (0.6 + Math.random() * 0.6);
+        vy = 0.9 + normY * 0.8 + Math.random() * 0.5;
+        vz = (Math.random()-.5) * 0.7;
+      } else {
+        // 城墙中段：向两侧漫开、微上扬如溅浪
+        vx = (tx / rXZ) * (0.6 + normR * 0.5) + (Math.random()-.5) * 0.3;
+        vy = 0.2 + Math.random() * 0.5;
+        vz = (tz / rXZ) * (0.4 + normR * 0.4) + (Math.random()-.5) * 0.3;
+      }
+      delay = normY * 0.35 + Math.random() * 0.16;
+
+    } else if (dissipateType === 'mountainMist') {
+      // 角山长城：从山脊线（高 Y）向上蒸腾成云雾，山脚（低 Y）微微沉降
+      if (normY > 0.5) {
+        // 山脊：向上蒸腾
+        vx = (Math.random()-.5) * 0.5;
+        vy = 0.7 + normY * 1.1 + Math.random() * 0.6;
+        vz = (Math.random()-.5) * 0.5;
+      } else {
+        // 山脚：轻微下沉 + 弥散
+        vx = (tx / rXZ) * 0.25 + (Math.random()-.5) * 0.35;
+        vy = -0.15 + Math.random() * 0.6;
+        vz = (tz / rXZ) * 0.25 + (Math.random()-.5) * 0.35;
+      }
+      delay = (1 - normY) * 0.42 + Math.random() * 0.18;
+
+    } else if (dissipateType === 'dragonSoar') {
+      // 龙形砖雕：整体上冲 + 前扑，鳞片从中心向两侧散开
+      const outward = 0.35 + normR * 0.8;
+      // 侧向两侧展开（鳞片）
+      const side = tz >= 0 ? 1 : -1;
+      vx = (tx / rXZ) * outward * 0.6 + (Math.random()-.5) * 0.3;
+      // 上冲 + 头部（高X或高Y）更强
+      const head = Math.max(normX, normY);
+      vy = 0.7 + head * 1.0 + Math.random() * 0.5;
+      vz = side * (0.5 + Math.random() * 0.5);
+      delay = (1 - normR) * 0.38 + Math.random() * 0.16;
+
+    } else if (dissipateType === 'dragonRoar') {
+      // 龙首砖雕：龙嘴（前方低Y中段）向前喷发、龙角（高Y）上冲、鬃毛（两侧）向外散
+      if (normY > 0.65) {
+        // 龙角：向上向前
+        vx = 0.4 + Math.random() * 0.4;
+        vy = 1.0 + normY * 0.8 + Math.random() * 0.4;
+        vz = (Math.random()-.5) * 0.4;
+      } else if (Math.abs(tz) > d.rMax * 0.3) {
+        // 鬃毛（|z|大）：两侧散
+        const side = tz >= 0 ? 1 : -1;
+        vx = 0.3 + Math.random() * 0.3;
+        vy = 0.4 + normY * 0.6 + Math.random() * 0.3;
+        vz = side * (0.9 + Math.random() * 0.5);
+      } else if (normY < 0.5) {
+        // 龙嘴 / 下颚 / 前面：向前喷发
+        vx = 1.3 + normX * 0.8 + Math.random() * 0.4;
+        vy = 0.2 + Math.random() * 0.4;
+        vz = (Math.random()-.5) * 0.4;
+      } else {
+        // 主体：向前上
+        vx = 0.7 + Math.random() * 0.3;
+        vy = 0.55 + Math.random() * 0.3;
+        vz = (Math.random()-.5) * 0.35;
+      }
+      delay = (1 - normX*0.6 - normY*0.4) * 0.35 + Math.random() * 0.15;
+
+    } else if (dissipateType === 'towerRise') {
+      // 敌楼/箭楼：楼檐（高Y）向上向外炸开、飞檐翘角侧展、基座下沉
+      if (normY > 0.65) {
+        // 楼檐：向上向两侧炸开
+        const side = tx >= 0 ? 1 : -1;
+        vx = side * (0.6 + Math.random() * 0.6) + (Math.random()-.5) * 0.2;
+        vy = 1.0 + normY * 0.9 + Math.random() * 0.4;
+        vz = (tz / (rXZ || 0.001)) * (0.5 + Math.random() * 0.4);
+      } else if (normY < 0.25) {
+        // 基座：下沉
+        vx = (Math.random()-.5) * 0.3;
+        vy = -0.7 - Math.random() * 0.4;
+        vz = (Math.random()-.5) * 0.3;
+      } else {
+        // 楼身：向外微散、微上扬
+        vx = (tx / rXZ) * (0.4 + normR * 0.4) + (Math.random()-.5) * 0.25;
+        vy = 0.3 + normY * 0.5 + Math.random() * 0.3;
+        vz = (tz / rXZ) * (0.4 + normR * 0.4) + (Math.random()-.5) * 0.25;
+      }
+      delay = (1 - normY) * 0.32 + Math.random() * 0.14;
+
+    } else if (dissipateType === 'gateOpen') {
+      // 城门：门洞两侧（|X|大 中下 Y）向外拉开、门楣（高Y）上抬、基座下沉
+      const sideness = Math.abs(tx) / (d.rMax * 0.6);
+      if (normY > 0.6) {
+        // 门楣 / 匾额：上抬向前
+        vx = (Math.random()-.5) * 0.3;
+        vy = 1.0 + normY * 0.6 + Math.random() * 0.35;
+        vz = 0.3 + Math.random() * 0.3;
+      } else if (normY < 0.25) {
+        // 门槛/基座：下沉
+        vx = (Math.random()-.5) * 0.25;
+        vy = -0.65 - Math.random() * 0.35;
+        vz = (Math.random()-.5) * 0.25;
+      } else if (sideness > 0.55) {
+        // 门洞两侧墙：向外拉开
+        const side = tx >= 0 ? 1 : -1;
+        vx = side * (1.0 + sideness * 0.6) + (Math.random()-.5) * 0.2;
+        vy = 0.2 + Math.random() * 0.35;
+        vz = (Math.random()-.5) * 0.3;
+      } else {
+        // 门洞中段：向前推出（象征"打开"）
+        vx = (tx / (rXZ || 0.001)) * 0.3 + (Math.random()-.5) * 0.25;
+        vy = 0.15 + Math.random() * 0.35;
+        vz = 0.7 + Math.random() * 0.4;
+      }
+      delay = (1 - sideness*0.5 - normY*0.3) * 0.35 + Math.random() * 0.15;
+
+    } else if (dissipateType === 'brickShatter') {
+      // 砖块/字模：从中心向外爆散、微微向前推、局部旋转扰动
+      const outward = 0.9 + normR * 0.8;
+      vx = (tx / (rXZ || 0.001)) * outward + (Math.random()-.5) * 0.4;
+      vz = (tz / (rXZ || 0.001)) * outward + (Math.random()-.5) * 0.4;
+      // 上下两侧微微上飞下沉，形成翻转感
+      vy = (ty >= 0 ? 0.5 : -0.3) + Math.random() * 0.5;
+      delay = normR * 0.32 + Math.random() * 0.14;
+    }
+
+    vel[i3]   = vx;
+    vel[i3+1] = vy;
+    vel[i3+2] = vz;
+    sg[i] = delay;
+  }
+  return {vel, sg};
+}
+
+// ═══════════════════════════ ArtifactScene ═══════════════════════════
+class ArtifactScene {
+  constructor(data) {
+    this.data = data;
+    this.ready = false;
+    this.active = false;
+    this.dissipating = false;
+    this.dissipT = 0;
+    this.t = 0;
+    this.rotY = 0;
+
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(45, 1, .001, 500);
+    this.camera.position.z = 4.2;
+    this.pivot = new THREE.Group();
+    this.scene.add(this.pivot);
+  }
+
+  load(cb) {
+    loader.load(encodeURI(this.data.file), gltf => {
+      const d = extractVerts(gltf.scene);
+      const entryType = this.data.entryType;
+      const stagger = computeStagger(d.pts, entryType, d);
+      const initPos = computeInitPos(d.pts, entryType);
+      const COUNT = d.pts.length/3;
+      const targetPos = new Float32Array(d.pts);
+      const curPos = new Float32Array(d.pts.length);
+      const cols = [];
+      for (let i=0; i<d.pts.length; i+=3) {
+        const ny = (d.pts[i+1]-d.nyMin)/d.nyR;
+        const [r,g,b] = pickCol(this.data.palette, d.pts[i], ny, d.pts[i+2]);
+        cols.push(r, g, b);
+      }
+      curPos.set(initPos);
+
+      const geo = new THREE.BufferGeometry();
+      const posAttr = new THREE.BufferAttribute(curPos, 3);
+      posAttr.usage = THREE.DynamicDrawUsage;
+      geo.setAttribute('position', posAttr);
+      geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(cols), 3));
+
+      this.mat = new THREE.PointsMaterial({
+        size: .011,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0,
+        sizeAttenuation: true,
+        blending: THREE.NormalBlending,
+        depthWrite: false,
+        alphaTest: .01,
+      });
+      this.pivot.add(new THREE.Points(geo, this.mat));
+      const pts = this.pivot.children[this.pivot.children.length - 1];
+      if (this.data.entryRotX) pts.rotation.x = this.data.entryRotX;
+      if (this.data.entryRotZ) pts.rotation.z = this.data.entryRotZ;
+
+      const geoNat = new THREE.BufferGeometry();
+      geoNat.setAttribute('position', posAttr);
+      geoNat.setAttribute('color', new THREE.BufferAttribute(d.natCols, 3));
+      this.matNat = new THREE.PointsMaterial({
+        size: .011,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0,
+        sizeAttenuation: true,
+        blending: THREE.NormalBlending,
+        depthWrite: false,
+        alphaTest: .01,
+      });
+      const ptsNat = new THREE.Points(geoNat, this.matNat);
+      if (this.data.entryRotX) ptsNat.rotation.x = this.data.entryRotX;
+      if (this.data.entryRotZ) ptsNat.rotation.z = this.data.entryRotZ;
+      this.pivot.add(ptsNat);
+
+      const meshRoot = gltf.scene;
+      const bbox = new THREE.Box3().setFromObject(meshRoot);
+      const center = bbox.getCenter(new THREE.Vector3());
+      const size = bbox.getSize(new THREE.Vector3());
+      const sc = 2.2 / Math.max(size.x, size.y, size.z);
+      const meshGroup = new THREE.Group();
+      meshRoot.position.sub(center);
+      meshGroup.add(meshRoot);
+      meshGroup.scale.setScalar(sc);
+      if (this.data.entryRotX) meshGroup.rotation.x = this.data.entryRotX;
+      if (this.data.entryRotZ) meshGroup.rotation.z = this.data.entryRotZ;
+      meshRoot.traverse(node => {
+        if (node.isMesh && node.material) {
+          const mats = Array.isArray(node.material) ? node.material : [node.material];
+          mats.forEach(m => {
+            m.side = THREE.FrontSide;
+            m.transparent = true;
+            m.opacity = 0;
+            m.depthWrite = false;
+          });
+        }
+      });
+      this.pivot.add(meshGroup);
+      this._meshGroup = meshGroup;
+      this._meshRoot = meshRoot;
+
+      const hemi = new THREE.HemisphereLight(0xdde4ec, 0x181d22, 0.55);
+      const key  = new THREE.DirectionalLight(0xe8eef4, 1.4);
+      key.position.set(2, 3, 3);
+      const fill = new THREE.DirectionalLight(0xb8c8dc, 0.6);
+      fill.position.set(-3, 1.5, -2);
+      this.scene.add(hemi, key, fill);
+
+      this._targetPos = targetPos;
+      this._curPos = curPos;
+      this._initPos = initPos;
+      this._posAttr = posAttr;
+      this._stagger = stagger;
+      this._COUNT = COUNT;
+      this._d = d;
+      this.ASSEMBLE = 3.5;
+
+      const dissip = computeDissipate(d.pts, this.data.dissipateType, d);
+      this._dissipVel = dissip.vel;
+      this._dissipStagger = dissip.sg;
+
+      this.ready = true;
+      if (cb) cb();
+    }, null, err => console.error(err));
+  }
+
+  tick(dt) {
+    if (!this.ready) return;
+    if (!this.active && !this.dissipating) return;
+
+    if (this.dissipating) {
+      this.dissipT += dt;
+      const DUR = 2.2;
+      const prog = Math.min(this.dissipT / DUR, 1);
+      const fade = Math.max(0, (1 - Math.pow(Math.max(prog - 0.2, 0)/0.8, 1.8)));
+      const meshOut = Math.max(0, 1 - this.dissipT / 0.5);
+      this._setMeshOpacity(meshOut);
+      const pointIn = Math.min(this.dissipT / 0.5, 1);
+      this.mat.opacity    = 0;
+      this.matNat.opacity = 0.85 * pointIn * fade;
+      const C = this._COUNT, cp = this._curPos, vel = this._dissipVel, tp = this._targetPos;
+      const sg = this._dissipStagger;
+      for (let i=0; i<C; i++) {
+        const i3 = i*3;
+        const localProg = Math.max(0, Math.min((this.dissipT - sg[i]) / (DUR*0.7), 1));
+        const s = localProg * localProg * 2.8;
+        cp[i3]   = tp[i3]   + vel[i3]   * s;
+        cp[i3+1] = tp[i3+1] + vel[i3+1] * s;
+        cp[i3+2] = tp[i3+2] + vel[i3+2] * s;
+      }
+      this._posAttr.needsUpdate = true;
+      this.pivot.rotation.y = this.rotY + this.dissipT * 0.12;
+      if (prog >= 1) { this.dissipating = false; this.mat.opacity = 0; this.matNat.opacity = 0; }
+      return;
+    }
+
+    this.t += dt;
+    const smoothstep = x => { const c = Math.min(Math.max(x,0),1); return c*c*(3 - 2*c); };
+    const SPIN_START = this.ASSEMBLE + 1.0;
+    if (this.t > SPIN_START) {
+      const spinRamp = Math.min((this.t - SPIN_START) / 1.5, 1);
+      this.rotY += dt * 0.16 * spinRamp * spinRamp;
+    }
+    this.pivot.rotation.y = this.rotY;
+    const smootherstep = x => { const c = Math.min(Math.max(x,0),1); return c*c*c*(c*(c*6-15)+10); };
+    const SPIN_HOLD = 2.0;
+    const CROSSFADE_DUR = 1.0;
+    const REVEAL_DUR = 2.2;
+    const t0 = this.ASSEMBLE + SPIN_HOLD;
+    const t1 = t0 + CROSSFADE_DUR;
+    const dye = smootherstep((this.t - t0) / CROSSFADE_DUR);
+    const reveal = smootherstep((this.t - t1) / REVEAL_DUR);
+    const baseIn = Math.min(smoothstep(this.t / (this.ASSEMBLE + .3)) * 0.82, 0.78);
+    // 让点云在 reveal 前 60% 只淡出一小半，尾段 40% 才快速淡到 0，
+    // 保证 mesh 主导时期点云已经变淡，避免"两层叠影"的重感
+    const ptFade = reveal < 0.6 ? (1 - reveal * 0.5) : (1 - 0.3 - (reveal - 0.6) * 1.75);
+    const ptFadeClamp = Math.max(0, ptFade);
+    this.mat.opacity    = baseIn * (1 - dye) * ptFadeClamp;
+    this.matNat.opacity = baseIn * dye * ptFadeClamp;
+    this._setMeshOpacity(reveal);
+    const C = this._COUNT, tp = this._targetPos, cp = this._curPos, ip = this._initPos, sg = this._stagger;
+    for (let i=0; i<C; i++) {
+      const i3 = i*3, tx=tp[i3], ty=tp[i3+1], tz=tp[i3+2];
+      const p = smoothstep(Math.max(0, this.t - sg[i]) / this.ASSEMBLE);
+      const bk = Math.min(Math.max(p - 0.85, 0)/0.15, 1);
+      cp[i3]   = ip[i3]   + (tx-ip[i3])   * p + Math.sin(this.t*.8 + tx*5.1 + ty*3.3) * 0.005 * bk;
+      cp[i3+1] = ip[i3+1] + (ty-ip[i3+1]) * p + Math.cos(this.t*.65 + ty*4.7 + tz*2.9) * 0.004 * bk;
+      cp[i3+2] = ip[i3+2] + (tz-ip[i3+2]) * p + Math.sin(this.t*.55 + tz*6.1 + tx*4)   * 0.004 * bk;
+    }
+    this._posAttr.needsUpdate = true;
+  }
+
+  render() {
+    renderer.render(this.scene, this.camera);
+  }
+
+  enter() {
+    this.active = true; this.dissipating = false; this.dissipT = 0;
+    this.t = 0; this.rotY = 0;
+    if (this.mat) this.mat.opacity = 0;
+    if (this.matNat) this.matNat.opacity = 0;
+    this._setMeshOpacity(0);
+    if (this._curPos && this._initPos) this._curPos.set(this._initPos);
+    if (this._posAttr) this._posAttr.needsUpdate = true;
+  }
+
+  _setMeshOpacity(o) {
+    if (!this._meshRoot) return;
+    // 关键：depthWrite 早早开启（o > 0.12），避免过渡末段从"半透可穿视"突然锁成实心的一晃
+    // solid 阈值保留在接近 1，用于关闭 transparent 走 opaque 路径
+    const opaque = o >= 0.995;
+    const depthWrite = o > 0.12;
+    this._meshRoot.traverse(node => {
+      if (node.isMesh && node.material) {
+        const mats = Array.isArray(node.material) ? node.material : [node.material];
+        mats.forEach(m => {
+          m.transparent = !opaque;
+          m.opacity = opaque ? 1 : o;
+          m.depthWrite = depthWrite;
+          m.visible = o > 0.001;
+        });
+      }
+    });
+  }
+
+  leave() {
+    if (!this.ready) { this.active = false; return 0; }
+    this.active = false;
+    this.dissipating = true;
+    this.dissipT = 0;
+    return 2400;
+  }
+
+  setAspect(a) {
+    this.camera.aspect = a;
+    this.camera.updateProjectionMatrix();
+  }
+}
+
+// ═══════════════════════════ TitleScene ═══════════════════════════
+class TitleScene {
+  constructor() {
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, .1, 200);
+    this.camera.position.z = 5;
+    this.t = 0; this.active = false;
+    const N = 2400, pos = new Float32Array(N*3), col = new Float32Array(N*3);
+    for (let i=0; i<N; i++) {
+      pos[i*3]   = (Math.random()-.5) * 22;
+      pos[i*3+1] = (Math.random()-.5) * 13;
+      pos[i*3+2] = (Math.random()-.5) * 9;
+      const br = 0.28 + Math.random() * 0.60;
+      // 冷调星野：偏蓝白
+      col[i*3]   = br * 0.68;
+      col[i*3+1] = br * 0.78;
+      col[i*3+2] = br * 0.94;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
+    this.pts = new THREE.Points(geo, new THREE.PointsMaterial({
+      size: .045, vertexColors: true, transparent: true, opacity: .55,
+      sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    }));
+    this.scene.add(this.pts);
+  }
+  tick(dt) {
+    if (!this.active) return;
+    this.t += dt;
+    this.pts.rotation.y = this.t * 0.04;
+    this.pts.rotation.x = this.t * 0.015;
+  }
+  render() { renderer.render(this.scene, this.camera); }
+  enter() { this.active = true; }
+  leave() { this.active = false; }
+  setAspect(a) { this.camera.aspect = a; this.camera.updateProjectionMatrix(); }
+}
+
+// ═══════════════════════════ FinaleScene ═══════════════════════════
+class FinaleScene {
+  constructor() {
+    this.ready = false; this.active = false;
+    this.dissipating = false; this.dissipT = 0; this.t = 0;
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, .001, 500);
+    this.camera.position.z = 6.2;
+    this.groups = [];
+    this.loaded = 0;
+  }
+
+  load(glbs, cb) {
+    // 9 件：3×3 网格布局
+    const POSITIONS = [
+      [-2.4,  1.6], [ 0.0,  1.6], [ 2.4,  1.6],
+      [-2.4,  0.0], [ 0.0,  0.0], [ 2.4,  0.0],
+      [-2.4, -1.6], [ 0.0, -1.6], [ 2.4, -1.6],
+    ];
+    const hemi = new THREE.HemisphereLight(0xdde4ec, 0x181d22, 0.55);
+    const key  = new THREE.DirectionalLight(0xe8eef4, 1.4);
+    key.position.set(2, 3, 3);
+    const fill = new THREE.DirectionalLight(0xb8c8dc, 0.6);
+    fill.position.set(-3, 1.5, -2);
+    this.scene.add(hemi, key, fill);
+
+    glbs.forEach((file, idx) => {
+      loader.load(encodeURI(file), gltf => {
+        const d = extractVerts(gltf.scene, 40000);
+        const COUNT = d.pts.length/3;
+        const targetPos = new Float32Array(d.pts);
+        const curPos = new Float32Array(d.pts.length);
+        const initPos = new Float32Array(d.pts.length);
+        for (let i=0; i<COUNT; i++) {
+          const i3 = i*3;
+          initPos[i3]   = targetPos[i3]   + (Math.random()-.5) * 6;
+          initPos[i3+1] = targetPos[i3+1] + (Math.random()-.5) * 6;
+          initPos[i3+2] = targetPos[i3+2] + (Math.random()-.5) * 6;
+        }
+        curPos.set(initPos);
+        const stagger = new Float32Array(COUNT);
+        for (let i=0; i<COUNT; i++) {
+          const dist = Math.sqrt(
+            d.pts[i*3]**2 + d.pts[i*3+1]**2 + d.pts[i*3+2]**2
+          );
+          stagger[i] = idx * 0.5 + dist * 0.8 + Math.random() * 0.3;
+        }
+        const cols = [];
+        const pal = ARTIFACTS[idx].palette;
+        for (let i=0; i<d.pts.length; i+=3) {
+          const ny = (d.pts[i+1]-d.nyMin)/d.nyR;
+          const [r,g,b] = pickCol(pal, d.pts[i], ny, d.pts[i+2]);
+          cols.push(r*.76, g*.76, b*.76);
+        }
+        const geo = new THREE.BufferGeometry();
+        const posAttr = new THREE.BufferAttribute(curPos, 3);
+        posAttr.usage = THREE.DynamicDrawUsage;
+        geo.setAttribute('position', posAttr);
+        geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(cols), 3));
+        const mat = new THREE.PointsMaterial({
+          size: .009, vertexColors: true, transparent: true, opacity: 0,
+          sizeAttenuation: true, blending: THREE.NormalBlending, depthWrite: false, alphaTest: .01,
+        });
+        const g = new THREE.Group();
+        const inner = new THREE.Points(geo, mat);
+        if (ARTIFACTS[idx].entryRotX) inner.rotation.x = ARTIFACTS[idx].entryRotX;
+        if (ARTIFACTS[idx].entryRotZ) inner.rotation.z = ARTIFACTS[idx].entryRotZ;
+        g.add(inner);
+
+        const meshRoot = gltf.scene;
+        const bbox = new THREE.Box3().setFromObject(meshRoot);
+        const center = bbox.getCenter(new THREE.Vector3());
+        const size = bbox.getSize(new THREE.Vector3());
+        const sc = 2.2 / Math.max(size.x, size.y, size.z);
+        meshRoot.position.sub(center);
+        const meshGroup = new THREE.Group();
+        meshGroup.add(meshRoot);
+        meshGroup.scale.setScalar(sc);
+        if (ARTIFACTS[idx].entryRotX) meshGroup.rotation.x = ARTIFACTS[idx].entryRotX;
+        if (ARTIFACTS[idx].entryRotZ) meshGroup.rotation.z = ARTIFACTS[idx].entryRotZ;
+        const meshMats = [];
+        meshRoot.traverse(node => {
+          if (node.isMesh && node.material) {
+            const ms = Array.isArray(node.material) ? node.material : [node.material];
+            ms.forEach(m => {
+              m.side = THREE.FrontSide;
+              m.transparent = true;
+              m.opacity = 0;
+              m.depthWrite = false;
+              meshMats.push(m);
+            });
+          }
+        });
+        g.add(meshGroup);
+
+        const [px, py] = POSITIONS[idx];
+        g.position.set(px, py, 0);
+        g.scale.setScalar(0.62);   // 3×3 网格：每件缩小以避免相互重叠
+        this.scene.add(g);
+        this.groups.push({g, targetPos, curPos, initPos, posAttr, stagger, mat, COUNT, meshRoot, meshMats});
+        this.loaded++;
+        if (this.loaded === glbs.length) { this.ready = true; if (cb) cb(); }
+      }, null, err => console.error(err));
+    });
+  }
+
+  _setMeshOpacity(obj, o) {
+    const opaque = o >= 0.995;
+    const depthWrite = o > 0.12;
+    obj.meshMats.forEach(m => {
+      m.transparent = !opaque;
+      m.opacity = opaque ? 1 : o;
+      m.depthWrite = depthWrite;
+      m.visible = o > 0.001;
+    });
+  }
+
+  tick(dt) {
+    if (!this.ready) return;
+    if (!this.active && !this.dissipating) return;
+    const ease = x => 1 - Math.pow(1 - Math.min(x,1), 3);
+
+    if (this.dissipating) {
+      this.dissipT += dt;
+      const DUR = 2.0;
+      const prog = Math.min(this.dissipT / DUR, 1);
+      const meshOut = Math.max(0, 1 - this.dissipT / 0.5);
+      const pointIn = Math.min(this.dissipT / 0.5, 1);
+      for (const obj of this.groups) {
+        this._setMeshOpacity(obj, meshOut);
+        obj.mat.opacity = Math.max(0, 0.70 * pointIn * (1 - Math.pow(Math.max(prog - 0.15, 0)/0.85, 1.8)));
+        const {targetPos, curPos, posAttr, COUNT} = obj;
+        for (let i=0; i<COUNT; i++) {
+          const i3 = i*3;
+          const tx = targetPos[i3], ty = targetPos[i3+1], tz = targetPos[i3+2];
+          const len = Math.sqrt(tx*tx + ty*ty + tz*tz) || 1;
+          const lp = Math.min(Math.max(this.dissipT, 0)/DUR, 1);
+          const s = lp * lp * 3.0;
+          curPos[i3]   = tx + tx/len * s + (Math.random()-.5) * 0.015;
+          curPos[i3+1] = ty + ty/len * s + (Math.random()-.5) * 0.015;
+          curPos[i3+2] = tz + tz/len * s;
+        }
+        posAttr.needsUpdate = true;
+        obj.g.rotation.y += dt * 0.15;
+      }
+      if (prog >= 1) { this.dissipating = false; for (const o of this.groups) o.mat.opacity = 0; }
+      return;
+    }
+
+    this.t += dt;
+    if (this._assembleDone == null) {
+      const ASSEMBLE = 3.5;
+      let maxSg = 0;
+      for (const obj of this.groups) {
+        for (let i=0; i<obj.stagger.length; i++) if (obj.stagger[i] > maxSg) maxSg = obj.stagger[i];
+      }
+      this._assembleDone = maxSg + ASSEMBLE;
+    }
+    const SPIN_HOLD = 2.0;
+    const REVEAL_DUR = 1.6;
+    const revealStart = this._assembleDone + SPIN_HOLD;
+    const smootherstep = x => { const c = Math.min(Math.max(x,0),1); return c*c*c*(c*(c*6-15)+10); };
+    const reveal = smootherstep((this.t - revealStart) / REVEAL_DUR);
+
+    for (const obj of this.groups) {
+      const {targetPos, curPos, initPos, posAttr, stagger, mat, COUNT} = obj;
+      const baseIn = Math.min(ease(this.t/5) * 0.72, 0.68);
+      mat.opacity = baseIn * (1 - reveal);
+      this._setMeshOpacity(obj, reveal);
+      obj.g.rotation.y = this.t * 0.10;
+      for (let i=0; i<COUNT; i++) {
+        const i3 = i*3, tx=targetPos[i3], ty=targetPos[i3+1], tz=targetPos[i3+2];
+        const p = ease(Math.max(0, this.t - stagger[i]) / 3.5);
+        const bk = Math.min(Math.max(p - 0.85, 0)/0.15, 1) * 0.3;
+        curPos[i3]   = initPos[i3]   + (tx-initPos[i3])   * p + Math.sin(this.t*.5 + tx*4) * bk * 0.008;
+        curPos[i3+1] = initPos[i3+1] + (ty-initPos[i3+1]) * p + Math.cos(this.t*.4 + ty*4) * bk * 0.007;
+        curPos[i3+2] = initPos[i3+2] + (tz-initPos[i3+2]) * p;
+      }
+      posAttr.needsUpdate = true;
+    }
+  }
+
+  render() { renderer.render(this.scene, this.camera); }
+
+  enter() {
+    this.active = true; this.t = 0; this.dissipating = false; this.dissipT = 0;
+    this._assembleDone = null;
+    for (const obj of this.groups) {
+      obj.mat.opacity = 0;
+      this._setMeshOpacity(obj, 0);
+      obj.curPos.set(obj.initPos);
+      obj.posAttr.needsUpdate = true;
+    }
+  }
+
+  leave() {
+    this.active = false;
+    if (!this.ready) return 0;
+    this.dissipating = true; this.dissipT = 0;
+    return 2200;
+  }
+
+  setAspect(a) { this.camera.aspect = a; this.camera.updateProjectionMatrix(); }
+}
+
+// ═══════════════════════════ INIT ═══════════════════════════
+let titleScene = new TitleScene();
+let artScenes = ARTIFACTS.map(a => new ArtifactScene(a));
+let finaleScene = new FinaleScene();
+
+const $loadStatus = document.getElementById('load-status');
+let loaded = 0;
+const total = ARTIFACTS.length;   // 只统计文物，尾页延迟加载不计入首屏进度
+
+// ── 阶段状态 ──
+let constructionStarted = false;   // 是否已开始加载构境层
+let constructionRunning = false;   // 渲染循环是否运行
+let autoPlay = false;              // 是否自动播放
+let autoTimer = null;              // 自动推进定时器
+
+// 点击「开始体验」后才加载 GLB 并启动渲染循环（让序章秒开）
+function startConstruction() {
+  if (constructionStarted) return;
+  constructionStarted = true;
+  constructionRunning = true;
+  document.getElementById('global-loading').classList.remove('hidden');
+
+  frame();
+
+  // 只先加载第 1 件文物，其余按需预加载；尾页延迟到播放后期加载
+  loadArtifact(0);
+}
+
+// 按需加载第 i 件文物（i 为 artScenes 索引）
+function loadArtifact(i) {
+  if (i < 0 || i >= artScenes.length) return;
+  const s = artScenes[i];
+  if (s.ready || s._loading) return;
+  s._loading = true;
+  s.load(() => {
+    s._loading = false;
+    loaded++;
+    $loadStatus.textContent = `已加载 ${loaded}/${total}…`;
+    if (i === 0) onFirstReady();
+  });
+}
+
+// 延迟加载尾页（3×3 网格），复用已缓存模型之外的独立加载
+let finaleLoading = false;
+function loadFinale() {
+  if (finaleScene.ready || finaleLoading) return;
+  finaleLoading = true;
+  finaleScene.load(ARTIFACTS.map(a => a.file), () => { finaleLoading = false; });
+}
+
+// 第 1 件文物就绪即可开播（不再等待全部 18 次加载）
+function onFirstReady() {
+  if (!constructionRunning) return;   // 用户已跳过/离开，忽略迟到的加载完成
+  const $gl = document.getElementById('global-loading');
+  $gl.classList.add('done');
+  setTimeout(() => { $gl.style.display = 'none'; }, 900);
+  startTitleAnim();
+  autoPlay = true;
+  scheduleAutoAdvance();
+}
+
+function startTitleAnim() {
+  titleScene.enter();
+  const show = id => { const el = document.getElementById(id); if (el) el.classList.add('show'); };
+  setTimeout(() => show('t-zh'),     500);
+  setTimeout(() => show('t-div'),   1100);
+  setTimeout(() => show('t-museum'),1600);
+}
+
+// ── 自动播放：按每页固定时长推进（标题 4.6s → 9 件文物各 9.5s → 尾页 12.5s）──
+const AUTO_DURATION = [4600, 9500, 9500, 9500, 9500, 9500, 9500, 9500, 9500, 9500, 12500];
+
+function scheduleAutoAdvance() {
+  if (!autoPlay) return;
+  clearTimeout(autoTimer);
+  const hold = AUTO_DURATION[currentSlide] || 9500;
+  autoTimer = setTimeout(() => {
+    if (!autoPlay) return;
+    if (currentSlide >= TOTAL_SLIDES - 1) {
+      showTransition();
+    } else {
+      const next = currentSlide + 1;
+      if (next === 10) enterFinaleWhenReady();
+      else gotoSlide(next);
+    }
+  }, hold);
+}
+
+// 进入尾页前确保 3×3 网格模型已就绪，未就绪则短间隔重试
+function enterFinaleWhenReady() {
+  if (!autoPlay) return;
+  if (finaleScene.ready) { gotoSlide(10); return; }
+  autoTimer = setTimeout(enterFinaleWhenReady, 600);
+}
+
+// ── 结束过渡：显示两行文案约 2 秒后进入数字人页 ──
+function showTransition() {
+  autoPlay = false;
+  clearTimeout(autoTimer);
+  document.getElementById('skip-btn').classList.remove('active');
+  document.getElementById('transition-overlay').classList.add('active');
+  setTimeout(() => {
+    document.getElementById('transition-overlay').classList.remove('active');
+    disposeConstruction();
+    showPhase('digital');
+  }, 2200);
+}
+
+// ── 跳过：立即停止并卸载 3D，进入数字人页 ──
+function skipToDigital() {
+  autoPlay = false;
+  clearTimeout(autoTimer);
+  disposeConstruction();
+  showPhase('digital');
+}
+
+// ── 卸载 3D 渲染循环与 GPU 资源 ──
+function disposeConstruction() {
+  constructionRunning = false;
+  clearTimers();
+  try {
+    const disposeRoot = root => {
+      if (!root || !root.traverse) return;
+      root.traverse(o => {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) {
+          const ms = Array.isArray(o.material) ? o.material : [o.material];
+          ms.forEach(m => {
+            for (const k in m) { const v = m[k]; if (v && v.isTexture) v.dispose(); }
+            m.dispose();
+          });
+        }
+      });
+    };
+    disposeRoot(titleScene.scene);
+    artScenes.forEach(s => disposeRoot(s.scene));
+    disposeRoot(finaleScene.scene);
+    // 注意：不 dispose renderer，保留 canvas WebGL 上下文，供「返回长城构境」时重新初始化
+  } catch (e) { console.warn('[dispose]', e); }
+  document.getElementById('slides').style.display = 'none';
+  hideLoading();
+}
+
+// ── 把加载遮罩重置为初始隐藏状态 ──
+function hideLoading() {
+  const $gl = document.getElementById('global-loading');
+  $gl.classList.add('hidden');
+  $gl.classList.remove('done');
+  $gl.style.display = '';
+  document.getElementById('load-status').textContent = '正在加载模型…';
+}
+
+// ── 阶段切换（prologue / construction / digital）──
+function showPhase(name) {
+  const prologue = document.getElementById('phase-prologue');
+  const digital  = document.getElementById('phase-digital');
+  const skipBtn  = document.getElementById('skip-btn');
+  const backBtn  = document.getElementById('back-to-construction');
+  prologue.classList.toggle('active', name === 'prologue');
+  digital.classList.toggle('active', name === 'digital');
+  skipBtn.classList.toggle('active', name === 'construction');
+  backBtn.classList.toggle('active', name === 'digital');
+}
+
+// ── 返回长城构境：重建场景对象并从头重新播放（不刷新页面）──
+function resetConstruction() {
+  // 1. 重建三个场景对象（旧的已在 dispose 时释放）
+  titleScene = new TitleScene();
+  artScenes = ARTIFACTS.map(a => new ArtifactScene(a));
+  finaleScene = new FinaleScene();
+
+  // 2. 重置全局状态
+  loaded = 0;
+  constructionStarted = false;
+  constructionRunning = false;
+  autoPlay = false;
+  clearTimeout(autoTimer);
+  autoTimer = null;
+  finaleLoading = false;
+  currentSlide = 0;
+  transitioning = false;
+  clearTimers();
+  for (let i = 1; i <= 9; i++) slideLangs[i] = 'zh';
+
+  // 3. 重置 DOM 可见状态（文物/尾页文字由 runArtSequence / runFinaleSequence 重播时自行清空重填）
+  const slides = document.getElementById('slides');
+  slides.style.display = '';
+  document.querySelectorAll('.slide').forEach((el, i) => {
+    el.classList.toggle('active', i === 0);
+    el.style.opacity = '';
+    el.style.transition = '';
+  });
+  ['t-zh', 't-div', 't-museum'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
+  document.getElementById('transition-overlay').classList.remove('active');
+  hideLoading();
+
+  // 4. 回到构境阶段并重新开始
+  showPhase('construction');
+  startConstruction();
+}
+
+// ═══════════════════════════ SLIDE MANAGEMENT ═══════════════════════════
+let currentSlide = 0;
+const TOTAL_SLIDES = 11;   // 0: title, 1-9: artifacts, 10: finale
+let transitioning = false;
+
+function gotoSlide(n) {
+  if (transitioning) return;
+  if (n < 0 || n >= TOTAL_SLIDES) return;
+  if (n === currentSlide) return;
+  transitioning = true;
+
+  const prev = currentSlide;
+  const prevSlideEl = document.getElementById(`slide-${prev}`);
+
+  let dissipDur = 0;
+  if (prev === 0) { titleScene.leave(); dissipDur = 0; }
+  else if (prev >= 1 && prev <= 9) { dissipDur = artScenes[prev-1].leave(); }
+  else if (prev === 10) { dissipDur = finaleScene.leave(); }
+
+  prevSlideEl.style.transition = `opacity ${(dissipDur/1000).toFixed(2)}s ease`;
+  prevSlideEl.style.opacity = '0';
+
+  setTimeout(() => {
+    prevSlideEl.classList.remove('active');
+    prevSlideEl.style.opacity = '';
+    prevSlideEl.style.transition = '';
+
+    currentSlide = n;
+    const nextEl = document.getElementById(`slide-${n}`);
+    nextEl.classList.add('active');
+
+    if (n === 0) {
+      titleScene.enter();
+    } else if (n >= 1 && n <= 9) {
+      const sc = artScenes[n-1];
+      sc.enter();
+      // 流水线预加载：进入第 n 件时后台加载下一件；第 8 件起同时加载尾页
+      if (n < 9) loadArtifact(n);
+      if (n >= 8) loadFinale();
+      let textDelay = 3000;
+      if (sc._stagger) {
+        const sorted = Array.from(sc._stagger).sort((a,b) => a-b);
+        textDelay = sorted[Math.floor(sc._COUNT * 0.6)] * 1000 + 300;
+      }
+      setTimeout(() => runArtSequence(n, slideLangs[n] || 'zh'), textDelay);
+    } else if (n === 10) {
+      finaleScene.enter();
+      setTimeout(() => runFinaleSequence(), 2200);
+    }
+
+    document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+    if (autoPlay) scheduleAutoAdvance();
+    setTimeout(() => { transitioning = false; }, 950);
+  }, dissipDur + 80);
+}
+
+// ═══════════════════════════ TYPEWRITER ═══════════════════════════
+const timers = [];
+function typeText(el, text, speed) {
+  return new Promise(res => {
+    el.classList.add('cursor'); el.innerHTML = '';
+    const chars = [...text]; let i = 0;
+    function step() {
+      if (i >= chars.length) { el.classList.remove('cursor'); res(); return; }
+      el.innerHTML = chars.slice(0, ++i).join('').replace(/\n/g, '<br>');
+      const ch = chars[i-1];
+      const d = ch === '\n' ? speed * 10
+              : (ch === '，' || ch === '。' || ch === ',' || ch === '.') ? speed * 4
+              : speed;
+      timers.push(setTimeout(step, d));
+    }
+    step();
+  });
+}
+function wait(ms) { return new Promise(r => timers.push(setTimeout(r, ms))); }
+function clearTimers() { while (timers.length) clearTimeout(timers.pop()); }
+
+const slideLangs = {1:'zh', 2:'zh', 3:'zh', 4:'zh', 5:'zh', 6:'zh', 7:'zh', 8:'zh', 9:'zh'};
+
+async function runArtSequence(slideIdx, lang) {
+  clearTimers();
+  const art = ARTIFACTS[slideIdx-1];
+  const d = art[lang];
+  const at = document.getElementById(`at-${slideIdx}`);
+  const $label   = at.querySelector('.a-label');
+  const $title   = at.querySelector('.a-title');
+  const $sub     = at.querySelector('.a-sub');
+  const lines    = at.querySelectorAll('.draw-line');
+  const rows     = at.querySelectorAll('.m-row');
+  const $desc    = at.querySelector('.a-desc');
+  const $langRow = at.querySelector('.lang-row');
+
+  $label.classList.remove('in'); $label.style.opacity = '0';
+  $title.innerHTML = ''; $sub.innerHTML = ''; $desc.innerHTML = '';
+  lines.forEach(l => l.classList.remove('drawn'));
+  rows.forEach(r => {
+    r.classList.remove('in');
+    r.querySelector('.m-key').textContent = '';
+    r.querySelector('.m-val').textContent = '';
+  });
+  $langRow.classList.remove('in');
+
+  $label.style.transition = 'opacity 1s'; await wait(100);
+  $label.style.opacity = '1';
+  await wait(500);
+  await typeText($title, d.title, 75);
+  await wait(100);
+  await typeText($sub,   d.sub,   35);
+  await wait(200);
+  lines[0].classList.add('drawn'); await wait(750);
+  for (let i=0; i<5; i++) {
+    const row = rows[i];
+    row.classList.add('in');
+    await wait(50);
+    await typeText(row.querySelector('.m-key'), d.meta[i][0], 55);
+    await wait(60);
+    await typeText(row.querySelector('.m-val'), d.meta[i][1], 42);
+    await wait(80);
+  }
+  await wait(150);
+  lines[1].classList.add('drawn'); await wait(450);
+  $desc.className = lang === 'en' ? 'a-desc en' : 'a-desc';
+  await typeText($desc, d.desc, 15);
+  await wait(350);
+  $langRow.classList.add('in');
+}
+
+async function runFinaleSequence() {
+  clearTimers();
+  const $label = document.getElementById('f-label');
+  const $title = document.getElementById('f-title');
+  const $sub   = document.getElementById('f-sub');
+  const $div   = document.getElementById('f-div');
+  const $desc  = document.getElementById('f-desc');
+
+  $label.classList.remove('in');
+  $title.innerHTML = ''; $sub.innerHTML = ''; $desc.innerHTML = '';
+  $div.classList.remove('drawn');
+
+  $label.classList.add('in'); await wait(500);
+  await typeText($title, FINALE.title, 90);
+  await wait(150);
+  await typeText($sub,   FINALE.sub,   38);
+  await wait(800);
+  $div.classList.add('drawn'); await wait(1000);
+  await typeText($desc,  FINALE.desc,  16);
+}
+
+// ═══════════════════════════ LANGUAGE SWITCH ═══════════════════════════
+window.switchLang = function(slideIdx, lang) {
+  slideLangs[slideIdx] = lang;
+  const at = document.getElementById(`at-${slideIdx}`);
+  at.querySelectorAll('.lang-btn').forEach(b => {
+    const isZh = b.textContent === '中文';
+    b.classList.toggle('active', (lang === 'zh' && isZh) || (lang === 'en' && !isZh));
+  });
+  runArtSequence(slideIdx, lang);
+};
+
+// ═══════════════════════════ EVENTS ═══════════════════════════
+// 填充静态文案
+document.getElementById('prologue-title').textContent = SITE_TEXT.title;
+document.getElementById('prologue-subtitle').textContent = SITE_TEXT.subtitle;
+document.getElementById('prologue-body').textContent = SITE_TEXT.prologueBody;
+document.getElementById('start-btn').textContent = SITE_TEXT.startBtn;
+document.getElementById('transition-text').innerHTML = SITE_TEXT.transition.map(l => `<div>${l}</div>`).join('');
+document.getElementById('digital-title').textContent = SITE_TEXT.part3Title;
+document.getElementById('digital-subtitle').textContent = SITE_TEXT.part3Subtitle;
+document.getElementById('back-to-construction').textContent = SITE_TEXT.backBtn;
+document.getElementById('dialog-desc').textContent = SITE_TEXT.dialogDesc;
+document.getElementById('dialog-back').textContent = SITE_TEXT.dialogBack;
+document.getElementById('dialog-enter').textContent = SITE_TEXT.dialogEnter;
+
+// 渲染数字人卡片
+const cardsWrap = document.getElementById('digital-cards');
+DIGITAL_HUMANS.forEach(h => {
+  const card = document.createElement('div');
+  card.className = 'human-card';
+  // 追加时间戳查询参数，避免浏览器缓存旧头像，替换图片后刷新即生效
+  const sep = h.avatarImage && h.avatarImage.includes('?') ? '&' : '?';
+  const avatar = h.avatarImage
+    ? `<img src="${h.avatarImage}${sep}v=${Date.now()}" alt="${h.name}">`
+    : `<span class="avatar-fallback">${h.name.charAt(0)}</span>`;
+  card.innerHTML = `
+    <div class="human-avatar">${avatar}</div>
+    <div class="human-name">${h.name}</div>
+    <div class="human-role">${h.role}</div>
+    <div class="human-location">${h.location}</div>
+    <div class="human-desc">${h.description}</div>
+    <button class="human-talk-btn">${h.talkBtn}</button>
+  `;
+  card.querySelector('.human-talk-btn').addEventListener('click', () => openDialog(h));
+  cardsWrap.appendChild(card);
+});
+
+// ── 数字人引导弹窗 ──
+let currentHuman = null;
+function openDialog(h) {
+  currentHuman = h;
+  document.getElementById('dialog-title').textContent = SITE_TEXT.dialogTitle.replace('{name}', h.name);
+  const list = document.getElementById('dialog-questions');
+  list.innerHTML = '';
+  h.exampleQuestions.forEach(q => {
+    const li = document.createElement('li');
+    li.textContent = q;
+    list.appendChild(li);
+  });
+  document.getElementById('dialog-overlay').classList.add('active');
+}
+function closeDialog() {
+  document.getElementById('dialog-overlay').classList.remove('active');
+}
+document.getElementById('dialog-back').addEventListener('click', closeDialog);
+document.getElementById('dialog-enter').addEventListener('click', () => {
+  if (currentHuman && currentHuman.viduUrl) {
+    window.open(currentHuman.viduUrl, '_blank');
+  }
+  closeDialog();
+});
+document.getElementById('dialog-overlay').addEventListener('click', e => {
+  if (e.target.id === 'dialog-overlay') closeDialog();
+});
+
+// 开始体验
+document.getElementById('start-btn').addEventListener('click', () => {
+  showPhase('construction');
+  startConstruction();
+});
+
+// 跳过
+document.getElementById('skip-btn').addEventListener('click', skipToDigital);
+
+// 返回长城构境（重建场景并从头播放）
+document.getElementById('back-to-construction').addEventListener('click', resetConstruction);
+
+// ═══════════════════════════ 背景音乐 ═══════════════════════════
+const MUSIC_TRACK_1 = 'music/hebeizhige.mp3';
+const MUSIC_TRACK_2 = 'music/Hebei Wall of Time.mp3';
+const MUSIC_SWITCH_AT = 131;   // 第一首播放到 2 分 11 秒后切换到第二首
+
+const bgm = new Audio();
+bgm.src = MUSIC_TRACK_1;
+bgm.preload = 'auto';
+bgm.loop = false;
+let bgmSwitched = false;
+
+function tryPlayBgm() {
+  bgm.play().catch(() => {});
+}
+
+// 第一首播到指定时长后，切换到第二首并循环
+function switchToSecondTrack() {
+  if (bgmSwitched) return;
+  bgmSwitched = true;
+  const wasPlaying = !bgm.paused && !bgm.ended;
+  bgm.src = MUSIC_TRACK_2;
+  bgm.loop = true;
+  bgm.currentTime = 0;
+  if (wasPlaying) bgm.play().catch(() => {});
+}
+bgm.addEventListener('timeupdate', () => {
+  if (!bgmSwitched && bgm.currentTime >= MUSIC_SWITCH_AT) switchToSecondTrack();
+});
+
+// 自动播放（若被浏览器策略阻止，则在首次交互时再尝试）
+tryPlayBgm();
+['pointerdown', 'touchstart', 'keydown'].forEach(evt =>
+  window.addEventListener(evt, tryPlayBgm, { passive: true, once: true })
+);
+
+// 静音 / 播放 切换按钮
+const $musicBtn = document.getElementById('music-btn');
+function refreshMusicBtn() {
+  $musicBtn.textContent = bgm.muted ? '播放' : '静音';
+  $musicBtn.classList.toggle('muted', bgm.muted);
+}
+$musicBtn.addEventListener('click', () => {
+  bgm.muted = !bgm.muted;
+  if (!bgm.muted) tryPlayBgm();
+  refreshMusicBtn();
+});
+refreshMusicBtn();
+
+// ═══════════════════════════ MAIN LOOP ═══════════════════════════
+let last = performance.now();
+function frame() {
+  if (!constructionRunning) return;
+  requestAnimationFrame(frame);
+  const now = performance.now();
+  const dt = Math.min((now - last)/1000, 0.05);
+  last = now;
+
+  const W = renderer.domElement.width  / renderer.getPixelRatio();
+  const H = renderer.domElement.height / renderer.getPixelRatio();
+
+  renderer.setScissorTest(false);
+  renderer.setViewport(0, 0, W, H);
+  renderer.clear();
+
+  titleScene.tick(dt);
+  artScenes.forEach(s => s.tick(dt));
+  finaleScene.tick(dt);
+
+  if (currentSlide === 0 || titleScene.active) {
+    titleScene.setAspect(W/H);
+    renderer.setScissorTest(false);
+    renderer.setViewport(0, 0, W, H);
+    titleScene.render();
+  }
+
+  for (let i=0; i<artScenes.length; i++) {
+    const sc = artScenes[i];
+    if (sc.active || sc.dissipating) {
+      const halfW = W * 0.5;
+      sc.setAspect(halfW / H);
+      renderer.setScissorTest(true);
+      renderer.setScissor(halfW, 0, halfW, H);
+      renderer.setViewport(halfW, 0, halfW, H);
+      sc.render();
+    }
+  }
+
+  if (currentSlide === 10 || finaleScene.active || finaleScene.dissipating) {
+    finaleScene.setAspect(W/H);
+    renderer.setScissorTest(false);
+    renderer.setViewport(0, 0, W, H);
+    finaleScene.render();
+  }
+}
+
+addEventListener('resize', () => {
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+
+</body>
+</html>
