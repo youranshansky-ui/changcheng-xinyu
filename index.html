@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
-<head>
-<meta charset="UTF-8">
+<html lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>长城·龙魂 · 山海关砖石间的巨龙</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { width:100%; height:100%; overflow:hidden;
@@ -494,18 +494,37 @@ html, body { width:100%; height:100%; overflow:hidden;
   .dialog-box { max-height:86vh; overflow-y:auto; padding:30px 22px 26px; }
 }
 </style>
-</head>
+<style>
+#skip-btn { z-index: 310; }
+#global-loading { z-index: 250; }
+#repair-note {position:fixed;right:24px;bottom:56px;max-width:48vw;z-index:155;color:#a9bac7;font:12px/1.6 sans-serif;text-align:right;pointer-events:none;}
+#repair-controls {position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:170;display:flex;gap:9px;align-items:center;}
+#repair-controls button {background:#101820;color:#d8e4ed;border:1px solid #536470;padding:7px 12px;cursor:pointer;white-space:nowrap;}
+#repair-controls span {color:#a9bac7;font:12px sans-serif;white-space:nowrap;}
+#slides.repair-text .text-pane {width:100%;align-items:center;text-align:center;padding:75px max(8vw,24px) 85px;overflow:auto;justify-content:flex-start;background:radial-gradient(ellipse at center,#18232d,#050708 80%);}
+#slides.repair-text .text-pane>* {align-self:stretch;text-align:center;}
+#slides.repair-text .a-desc {text-align:center;white-space:pre-line;}
+#slides.repair-text .lang-row {justify-content:center;}
+#slides.repair-text .a-label,#slides.repair-text .m-row,#slides.repair-text .lang-row {opacity:1;transform:none;}
+#slides.repair-text .draw-line {width:100%;}
+#slides.repair-text .finale-overlay {overflow:auto;padding:85px 15px 90px;}
+#slides.repair-text .finale-desc {white-space:pre-line;}
+#phase-prologue {overflow:auto;}
+@media(max-width:768px){.text-pane {padding:65px 12px 75px 15px;overflow:auto;justify-content:flex-start;}.a-title{font-size:22px;letter-spacing:3px;}.a-sub{letter-spacing:1px;}.m-key{width:48px;letter-spacing:0;}.m-val{font-size:12px;letter-spacing:0;}.a-desc{font-size:12px;}.prologue-inner{padding:35px 18px;}.finale-divider.drawn{width:85vw;}.finale-desc{padding:0 12px;}#repair-note{bottom:70px;right:10px;}#repair-controls button{padding:7px 9px;}}
+</style></head>
 <body>
 
 <!-- ═══════════ 第一阶段 · 序章 ═══════════ -->
 <div id="phase-prologue" class="phase active">
   <div class="prologue-inner">
     <div class="prologue-en">Digital Interactive Experience</div>
-    <h1 class="prologue-title" id="prologue-title"></h1>
+    <h1 class="prologue-title" id="prologue-title">长城新语</h1>
     <div class="prologue-divider"></div>
-    <div class="prologue-subtitle" id="prologue-subtitle"></div>
-    <p class="prologue-body" id="prologue-body"></p>
-    <button class="start-btn" id="start-btn"></button>
+    <div class="prologue-subtitle" id="prologue-subtitle">河北长城文化数字交互体验</div>
+    <p class="prologue-body" id="prologue-body">长城不仅是一道跨越山河的建筑遗存，也承载着持续千年的文化记忆。本项目尝试以数字技术重新呈现河北长城的建筑形态，并通过数字人交互，让长城从被观看的文化遗产，转变为可以被聆听、被询问、被交流的文化体验。</p>
+    <button class="start-btn" id="start-btn">开始体验</button>
+    <button class="start-btn" id="quick-digital" style="margin-top:14px;padding:10px 30px;font-size:13px;letter-spacing:3px">直接进入数字人对话</button>
+    <p style="margin-top:16px;font-size:12px;line-height:1.6;color:rgba(200,216,232,.58)">完整三维展陈约 2 分钟；也可跳过，直接选择讲述者。</p>
   </div>
 </div>
 
@@ -545,8 +564,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(1,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(1,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(1,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(1,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -567,8 +586,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(2,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(2,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(2,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(2,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -589,8 +608,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(3,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(3,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(3,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(3,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -611,8 +630,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(4,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(4,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(4,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(4,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -633,8 +652,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(5,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(5,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(5,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(5,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -655,8 +674,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(6,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(6,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(6,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(6,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -677,8 +696,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(7,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(7,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(7,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(7,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -699,8 +718,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(8,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(8,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(8,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(8,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -721,8 +740,8 @@ html, body { width:100%; height:100%; overflow:hidden;
       <div class="draw-line"></div>
       <div class="a-desc-wrap"><div class="a-desc"></div></div>
       <div class="lang-row">
-        <button class="lang-btn active" onclick="switchLang(9,'zh')">中文</button>
-        <button class="lang-btn" onclick="switchLang(9,'en')">English</button>
+        <button class="lang-btn active" onclick="switchLang(9,&#39;zh&#39;)">中文</button>
+        <button class="lang-btn" onclick="switchLang(9,&#39;en&#39;)">English</button>
       </div>
     </div>
   </div>
@@ -760,25 +779,25 @@ html, body { width:100%; height:100%; overflow:hidden;
 <div id="scroll-hint">Click or scroll to navigate</div>
 
 <!-- ═══════════ 构境 · 跳过按钮 ═══════════ -->
-<button id="skip-btn">跳过</button>
+<button id="skip-btn">跳过展陈</button>
 
 <!-- ═══════════ 音乐控制 · 静音/播放 ═══════════ -->
 <button id="music-btn" title="静音 / 播放">静音</button>
 
 <!-- ═══════════ 数字人页 · 返回构境 ═══════════ -->
-<button id="back-to-construction"></button>
+<button id="back-to-construction">← 返回长城构境</button>
 
 <!-- ═══════════ 构境 → 新语 过渡文案 ═══════════ -->
 <div id="transition-overlay">
-  <div class="transition-text" id="transition-text"></div>
+  <div class="transition-text" id="transition-text"><div>砖石构筑长城，</div><div>故事让它继续被讲述。</div></div>
 </div>
 
 <!-- ═══════════ 第三阶段 · 数字人选择页 ═══════════ -->
 <div id="phase-digital" class="phase">
   <div class="digital-inner">
     <div class="digital-head">
-      <div class="digital-title" id="digital-title"></div>
-      <div class="digital-subtitle" id="digital-subtitle"></div>
+      <div class="digital-title" id="digital-title">选择一位长城讲述者</div>
+      <div class="digital-subtitle" id="digital-subtitle">跨越砖石与时间，与河北长城展开一次对话。</div>
     </div>
     <div class="digital-cards" id="digital-cards"></div>
   </div>
@@ -788,15 +807,52 @@ html, body { width:100%; height:100%; overflow:hidden;
 <div id="dialog-overlay">
   <div class="dialog-box">
     <div class="dialog-title" id="dialog-title"></div>
-    <div class="dialog-desc" id="dialog-desc"></div>
+    <div class="dialog-desc" id="dialog-desc">接下来你将进入实时数字人对话空间。你可以直接提出与这段长城相关的问题，也可以从下面的问题开始。</div>
     <ul class="dialog-questions" id="dialog-questions"></ul>
     <div class="dialog-actions">
-      <button class="dialog-btn back" id="dialog-back"></button>
-      <button class="dialog-btn enter" id="dialog-enter"></button>
+      <button class="dialog-btn back" id="dialog-back">返回</button>
+      <button class="dialog-btn enter" id="dialog-enter">进入实时对话</button>
     </div>
   </div>
 </div>
 
+<div id="repair-note" class="hidden" role="status"></div>
+<div id="repair-controls" class="hidden"><button id="repair-prev">上一页</button><span id="repair-page"></span><button id="repair-next">下一页</button></div>
+<script>
+(()=>{
+const B={"text": {"title": "长城新语", "subtitle": "河北长城文化数字交互体验", "prologueBody": "长城不仅是一道跨越山河的建筑遗存，也承载着持续千年的文化记忆。本项目尝试以数字技术重新呈现河北长城的建筑形态，并通过数字人交互，让长城从被观看的文化遗产，转变为可以被聆听、被询问、被交流的文化体验。", "startBtn": "开始体验", "part3Title": "选择一位长城讲述者", "part3Subtitle": "跨越砖石与时间，与河北长城展开一次对话。", "backBtn": "← 返回长城构境", "dialogDesc": "接下来你将进入实时数字人对话空间。你可以直接提出与这段长城相关的问题，也可以从下面的问题开始。", "dialogBack": "返回", "dialogEnter": "进入实时对话", "transition": ["砖石构筑长城，", "故事让它继续被讲述。"], "dialogTitle": "开始与{name}对话"}, "humans": [{"name": "礼礼", "role": "崇礼长城守护者", "location": "崇礼长城段", "description": "我来自燕山深处，带你认识自然山河中的长城故事。", "talkBtn": "与礼礼对话", "exampleQuestions": ["崇礼长城有什么独特的自然环境特点？", "这里的长城建筑和其他地区有什么不同？", "崇礼长城有哪些值得了解的历史故事？", "来到崇礼长城，最值得关注什么？"], "viduUrl": "https://www.vidu.cn/vidu-stream/share-avatar/3463313255508306", "avatarImage": "images/1.png"}, {"name": "峰峰", "role": "喜峰口长城讲述者", "location": "喜峰口长城段", "description": "我守望古老关隘，讲述长城背后的历史记忆。", "talkBtn": "与峰峰对话", "exampleQuestions": ["喜峰口为什么是长城的重要关隘？", "这里发生过哪些重要历史事件？", "喜峰口长城有什么建筑特点？", "这里体现了怎样的长城精神？"], "viduUrl": "https://www.vidu.cn/vidu-stream/share-avatar/3440866191998907", "avatarImage": "images/2.png"}, {"name": "山山", "role": "山海关历史见证者", "location": "山海关长城段", "description": "我见证天下第一关，带你探索山海关长城的历史与建筑智慧。", "talkBtn": "与山山对话", "exampleQuestions": ["为什么山海关被称为“天下第一关”？", "山海关长城有哪些重要建筑？", "山海关在中国长城历史中有什么意义？", "第一次来到山海关，最值得了解哪些内容？"], "viduUrl": "https://www.vidu.cn/vidu-stream/share-avatar/3440748986355535", "avatarImage": "images/3.png"}, {"name": "龙龙", "role": "老龙头长城讲述者", "location": "老龙头长城段", "description": "我守望长城入海处，带你见证巨龙入海的壮阔景象。", "talkBtn": "与龙龙对话", "exampleQuestions": ["老龙头为什么被称为“长城入海的地方”？", "老龙头长城有哪些独特的建筑？", "老龙头在明长城中有着怎样的重要地位？", "第一次来到老龙头，最值得了解什么？"], "viduUrl": "https://www.vidu.cn/vidu-stream/share-avatar/3440884070178909", "avatarImage": "images/4.png"}], "art": [{"zh": {"title": "老龙头", "sub": "Old Dragon's Head · Where the Wall Meets the Sea", "meta": [["始建", "明洪武十四年（1381）"], ["修葺", "戚继光 主持增筑"], ["位置", "河北秦皇岛 · 山海关"], ["构造", "入海石城 · 澄海楼"], ["长度", "入海约 22.4 m"]], "desc": "明万里长城东部起点，因城墙如巨龙探首入渤海，故名\"老龙头\"。石城由花岗巨石垒砌，历经风涛数百年，依然稳踞海岸。其上澄海楼三层飞檐，凭窗东望，唯见碧浪连天。\n\n戚继光戍蓟镇时，命人于此增筑入海石城与靖卤台，形成\"陆海相接、水战御倭\"的军事奇观。老龙头是万里长城唯一延伸入海的部分，也是长城精神最壮丽的收束。"}, "en": {"title": "老龙头", "sub": "Old Dragon's Head · Where the Wall Meets the Sea", "meta": [["Founded", "1381 (Ming, Hongwu 14)"], ["Rebuilt", "By General Qi Jiguang"], ["Location", "Shanhaiguan, Hebei"], ["Structure", "Sea Fortress · Chenghai Tower"], ["Extends", "ca. 22.4 m into the sea"]], "desc": "The easternmost origin of the Great Wall in Ming times — named \"Old Dragon's Head\" because the wall's stone body plunges into the Bohai Sea like a dragon dipping its brow to drink. Built of massive granite blocks, it has withstood the tides for six centuries. Above it soars the three-tiered Chenghai Tower, gazing east across an ocean of green waves.\n\nStationed at Jizhen, General Qi Jiguang ordered the extension of the sea-wall and Jinglu Terrace, creating a hybrid land-and-sea defence against Japanese raiders. Old Dragon's Head is the only part of the Great Wall that reaches the sea — the most majestic finale of the Wall's ten-thousand-li march."}}, {"zh": {"title": "角山长城", "sub": "Jiaoshan · First Peak of the Great Wall", "meta": [["位置", "秦皇岛 山海关北 3.5 km"], ["山系", "燕山山脉东端"], ["海拔", "主峰 519 m"], ["雅号", "万里长城第一山"], ["遗构", "明代砖砌长城 · 栖贤寺"]], "desc": "角山坐落于山海关城北，为燕山山脉东伸入海前的最后一座高峰，因\"双峰峥向宛若角立\"而得名。它是明代万里长城自老龙头起北跨越的第一座山峰，因而素有\"万里长城第一山\"之称。\n\n山势嵯峨，绵延起伏，是山海关的天然屏障。明初于此建栖贤寺，历代文人多留题咏；山顶西侧有一处天然堰塞湖，湖水碧翠，四山环合，是关外少有的清幽秀色。"}, "en": {"title": "角山长城", "sub": "Jiaoshan · First Peak of the Great Wall", "meta": [["Location", "3.5 km north of Shanhaiguan"], ["Range", "Eastern Yan Mountains"], ["Elevation", "519 m at main peak"], ["Epithet", "First Peak of the Great Wall"], ["Sites", "Ming brick wall · Qixian Temple"]], "desc": "Rising north of Shanhaiguan City, Jiaoshan is the final peak of the Yan Range before it plunges into the sea. Its twin summits, \"sharp and lifted like horns,\" give the mountain its name. As the first summit crossed by the Ming Great Wall after Old Dragon's Head, it has long been called the \"First Peak of the Wall.\"\n\nRugged and continuous, its ridge forms the natural bulwark of Shanhaiguan. Here in early Ming the Qixian Temple was founded, later a beloved retreat for scholar-poets. Just west of the summit lies a natural alpine lake — emerald water encircled by four green peaks, a rare pocket of stillness beyond the pass."}}, {"zh": {"title": "大境门", "sub": "Dajingmen · The Great Frontier Gate", "meta": [["始建", "明成化年间（15世纪）"], ["扩建", "清顺治元年（1644）"], ["位置", "河北张家口 · 万里长城"], ["形制", "单孔券门 · 匾额\"大好河山\""], ["地位", "长城四大关口之一"]], "desc": "大境门位于张家口市区北端，坐北朝南，是明清两代京师北门户之一。城门以\"境\"字命名——非\"关\"非\"隘\"，寓边关之外亦是华夏疆土。门额之上\"大好河山\"四字为民国察哈尔都统高维岳所题，笔力雄阔。\n\n自建门起，大境门便是内地与蒙古草原贸易的咽喉，\"茶马互市\"数百年不绝：南来的丝绸茶砖、北下的皮毛骏马皆经此门。它是万里长城四大关口之一，也是长城由军事屏障转向民族交融通道的历史见证。"}, "en": {"title": "大境门", "sub": "Dajingmen · The Great Frontier Gate", "meta": [["Founded", "Chenghua era, Ming (15th c.)"], ["Rebuilt", "Qing, Shunzhi 1 (1644)"], ["Location", "Zhangjiakou, Hebei"], ["Form", "Single-arch gate · \"Grand Rivers & Mountains\" tablet"], ["Status", "One of the Four Great Passes"]], "desc": "Rising at the northern edge of Zhangjiakou, Dajingmen faces south and served as one of the northern gateways to imperial Beijing under Ming and Qing rule. Its name — jing, \"territory\" — rather than \"pass\" or \"barrier,\" proclaims that lands beyond are equally the realm of China. The four calligraphic characters on the lintel, \"Grand Rivers and Mountains,\" were inscribed by Republic-era Chahar governor Gao Weiyue.\n\nFor centuries, Dajingmen was the throat of caravan trade between the inland and the Mongolian steppe: silk and tea flowed north, furs and horses flowed south. One of the Great Wall's four major gates, it witnessed the Wall's transformation from military bulwark to a corridor of ethnic exchange."}}, {"zh": {"title": "将军楼", "sub": "General's Tower · Watchtower of Command", "meta": [["年代", "明代（16世纪）"], ["形制", "空心敌楼 · 双层砖木"], ["位置", "河北长城 · 关隘要冲"], ["功用", "屯兵 · 瞭望 · 指挥"], ["特征", "箭窗 · 垛口 · 悬檐"]], "desc": "\"将军楼\"为明代长城敌楼中的顶阶形制，专供守边将领驻扎与指挥。楼分上下两层，下为屯兵藏械之所，上作瞭望与传令平台；四面开箭窗，可环视百里烽燧。\n\n戚继光《练兵实纪》有云：\"楼者，军之目也。\"其墙厚砖沉，梁架松柏，历五百年寒暑而不倾。今日登楼北望，塞外苍苍，仍似闻当年\"举火为信、鼓角相闻\"的边防号令。"}, "en": {"title": "将军楼", "sub": "General's Tower · Watchtower of Command", "meta": [["Period", "Ming (16th c.)"], ["Form", "Hollow watchtower · two-storey brick and timber"], ["Location", "Hebei · Great Wall pass"], ["Use", "Garrison · lookout · command post"], ["Features", "Arrow slits · crenellations · overhanging eaves"]], "desc": "The \"General's Tower\" is the highest grade of watchtower along the Ming Great Wall, reserved for commanding officers of the frontier. Two storeys tall, the lower level housed troops and weapons, while the upper served as a lookout and signal platform. Arrow slits on all four walls afforded a hundred-li survey of the beacon line.\n\nAs Qi Jiguang wrote in Records of Troop Training, \"The tower is the eye of the army.\" Its walls are thick, its beams of pine and cypress — after five centuries they stand unbowed. Ascend it today and gaze northward into the steppe; you can almost hear the old commands: fires lit for signals, drums and horns answering across the ridge."}}, {"zh": {"title": "大金山楼", "sub": "Great Jinshan Tower", "meta": [["年代", "明隆庆—万历（16世纪）"], ["位置", "河北秦皇岛 · 金山岭长城"], ["形制", "实心敌台 · 三券三伏"], ["地位", "金山岭主敌楼"], ["遗构", "箭窗 · 铺房 · 水槽"]], "desc": "大金山楼为金山岭长城两座金山楼中的正楼，因俯瞰\"燕山金山\"两水交汇处而得名。楼体高峻，以青砖磊砌为实心结构，取\"重压不摧、雷火不塌\"之意；顶部铺房仍存石础，可窥当年戍卒起居。\n\n此楼是明蓟镇总兵戚继光练兵防倭布局中的枢纽，与其东南的小金山楼隔涧相望。两楼一大一小，一实一空，配合火箭与铳炮，成\"双楼互援\"之防御奇观，为长城军事工程史上的极致。"}, "en": {"title": "大金山楼", "sub": "Great Jinshan Tower", "meta": [["Period", "Ming, Longqing–Wanli (16th c.)"], ["Location", "Jinshanling Wall, Hebei"], ["Form", "Solid tower · three arches, three vaults"], ["Status", "Primary tower of Jinshanling"], ["Remains", "Arrow slits · quarters · water channel"]], "desc": "The Great Jinshan Tower is the principal of the two \"Jinshan\" watchtowers along the Jinshanling Wall — named for its command over the confluence of the two Jinshan streams beneath. Built as a solid brick block for maximum resistance to siege and lightning alike, its rooftop still shows the stone footings of the garrison quarters.\n\nUnder General Qi Jiguang, then commander of the Ji Garrison, this tower anchored a mutual-support system with the Lesser Jinshan Tower opposite: one solid, one hollow, coordinating crossbow, rocket, and cannon fire. Together they form one of the most refined defensive pairings in the entire history of Great Wall engineering."}}, {"zh": {"title": "小金山楼", "sub": "Lesser Jinshan Tower", "meta": [["年代", "明代（16世纪）"], ["位置", "金山岭长城 · 大金山楼西侧"], ["形制", "空心敌楼 · 双层砖构"], ["功用", "驻兵 · 瞭望 · 联防"], ["特征", "三券三伏 · 顶部铺房"]], "desc": "小金山楼位于金山岭长城之上，与大金山楼互为犄角，因体量稍小而得名。楼内设有中心柱和藏兵洞，四壁开箭窗，士兵可循木梯登临顶部铺房，居高瞭望。\n\n楼体虽小，工艺却精：券顶三层，砖缝以糯米灰浆勾抹，历五百年仍严丝合缝。它与大金山楼形成\"一大一小、一实一虚\"的战术组合，是明蓟镇长城\"以楼为骨\"防御体系的活化石。"}, "en": {"title": "小金山楼", "sub": "Lesser Jinshan Tower", "meta": [["Period", "Ming (16th c.)"], ["Location", "Jinshanling · west of the Great Tower"], ["Form", "Hollow watchtower · two-storey brick"], ["Use", "Garrison · lookout · mutual defence"], ["Features", "Triple arch vaults · rooftop quarters"]], "desc": "The Lesser Jinshan Tower stands just west of its greater twin along the Jinshanling Wall, forming with it a pair of flanking strongholds. Smaller in scale, it contains a central pillar and inner chambers for stored weapons, with arrow slits on every wall and a wooden ladder rising to the rooftop quarters.\n\nModest in size but exquisite in craft, the tower's triple arches are bonded with sticky-rice mortar that has held its seams for five centuries. Together with the Great Tower, it forms a \"large-and-small, solid-and-hollow\" tactical duo — a living fossil of the Ming \"tower-as-skeleton\" defensive doctrine."}}, {"zh": {"title": "字模印文砖", "sub": "Inscribed Wall Brick with Kiln Mark", "meta": [["年代", "明万历年间（16—17世纪）"], ["质地", "青砖 · 阳文戳印"], ["尺寸", "约 38 × 18 × 9 cm"], ["铭文", "窑户 · 匠名 · 年份"], ["出处", "河北长城砖构遗存"]], "desc": "字模印文砖为明代长城营建中的\"责任制\"物证——每块青砖侧面均有戳印，标明烧造窑户、监工匠头与年份。倘若砖有裂、墙有塌，可循戳印追责，故谚曰：\"砖砖有主，块块问名。\"\n\n这块砖出自河北明代长城，戳印清晰可辨，字体端庄。它虽是万里长城中最微小的一员，却折射出一个庞大帝国的营造制度：以匠户为骨、以责任为魂，六百年不坏之城，正是由每一块可以问名的砖砌成。"}, "en": {"title": "字模印文砖", "sub": "Inscribed Wall Brick with Kiln Mark", "meta": [["Period", "Ming, Wanli reign (16th–17th c.)"], ["Material", "Grey brick · raised seal impression"], ["Size", "ca. 38 × 18 × 9 cm"], ["Inscription", "Kiln · foreman · year"], ["Provenance", "Great Wall, Hebei"]], "desc": "The inscribed brick is the material evidence of the Ming \"accountability system\" behind the building of the Wall. Each block's side bears a stamped seal identifying the kiln, the foreman-mason, and the year of firing. If a brick cracked or a wall collapsed, the stamp could be traced. As the saying went: \"Every brick has an owner, every block a name.\"\n\nThis specimen, drawn from a Ming-dynasty stretch of the Hebei Wall, still shows its stamp clearly. The humblest unit of the ten-thousand-li line, it nonetheless reveals an empire's system of construction — grounded in hereditary artisans and answerability. The Wall's six centuries of survival rest, quite literally, on bricks that can still be called by name."}}, {"zh": {"title": "长城砖雕·龙形构件", "sub": "Ming Brick Relief · Dragon Motif", "meta": [["年代", "明中晚期（16世纪）"], ["质地", "青砖阴刻 / 阳雕"], ["来源", "山海关关城建筑构件"], ["纹样", "团龙 · 云气 · 卷草"], ["功用", "城门 · 影壁 · 屋脊装饰"]], "desc": "明代山海关营建之时，工匠以青砖为材，于城门与屋脊部位施以龙形浮雕。团龙盘曲、鳞片森严，须发飞扬，间衬云气与卷草，是\"龙关\"神话在建筑上的物象化。\n\n砖雕龙不同于宫廷宝相所用的五爪金龙——它多为四爪或三爪，姿态雄野、线条粗犷，带有边塞卫戍的力道。城砖之上一鳞一爪，皆为百姓与士卒共托边关平安之愿。"}, "en": {"title": "长城砖雕·龙形构件", "sub": "Ming Brick Relief · Dragon Motif", "meta": [["Period", "Mid-late Ming (16th c.)"], ["Material", "Carved grey brick"], ["Origin", "Shanhaiguan Wall & gate"], ["Motif", "Coiled dragon · clouds · vines"], ["Use", "Gate · spirit wall · rooftop ridge"]], "desc": "When the Ming re-fortified Shanhaiguan, craftsmen worked the grey wall bricks into low-relief dragons above gates and along rooftop ridges. Coiled bodies, ranked scales, streaming whiskers and swirling clouds — the \"Dragon Pass\" myth given tangible form in the very stones of the frontier.\n\nUnlike the five-clawed gold dragons of the imperial court, these frontier dragons bear four or three claws — untamed in posture, coarse and powerful in line, carrying the weight of the garrison. Each scale, each claw etched into the brick was a prayer for a peaceful border — carved by soldier and mason alike."}}, {"zh": {"title": "龙首砖雕·细部", "sub": "Detail of the Dragon's Head", "meta": [["年代", "明代（15—17世纪）"], ["构件", "脊头 / 影壁 龙首"], ["质地", "青砖细刻"], ["特征", "龙目圆睁 · 鬃发飘扬"], ["出处", "山海关砖构建筑遗存"]], "desc": "砖雕龙首正面细部——双目圆睁如铜铃，双角向后卷起，鬃发根根分明，鼻梁高耸，唇齿间隐现火焰纹。整块青砖打磨如金属，砖缝里仍留有六百年的黑漆与烟痕。\n\n镜头贴近之处，可见工匠一凿一凿留下的刀痕：那是明代边军家眷所在的匠户，代代相传的手艺。龙首不是宫廷玩物，而是万千戍卒抬眼可望的守护之神——它守着城门，也守着家。"}, "en": {"title": "龙首砖雕·细部", "sub": "Detail of the Dragon's Head", "meta": [["Period", "Ming (15th–17th c.)"], ["Element", "Ridge-head / spirit-wall dragon"], ["Material", "Finely carved grey brick"], ["Features", "Wide eyes · streaming mane"], ["Provenance", "Shanhaiguan Wall structures"]], "desc": "A close view of the dragon's brow: round eyes glaring like bronze bells, twin horns curling back, whiskers combed one by one, a proud ridge of a nose, a hint of flame between fangs. The grey brick has been ground smooth as metal — its seams still black with six hundred years of soot and lacquer.\n\nStep closer and you can count each chisel-stroke: the hereditary craft of frontier artisans, families of the garrison, passed from father to son. This dragon was no palace ornament — it was the guardian glimpsed daily by ten thousand soldiers. It watched the gate. It watched over home."}}], "finale": {"title": "河北长城文化数字化展陈", "sub": "", "desc": "从张家口的大境门到秦皇岛的老龙头，从角山之巅的第一座敌楼到金山岭上的双楼互援，从万砖有名的营造制度到砖雕龙首的怒目——万里长城蜿蜒于河北大地之上，既是一部石头写就的军事史，也是一幅民族融合与匠意流转的画卷。\n\n数字化不是把砖石搬进屏幕，而是把六百年间戍卒、匠人、商旅、文人所留下的呼吸重新点亮：让一块字模砖再被叫出匠户的名字，让一座敌楼再被抬头仰望，让一条巨龙再从青砖里腾起。\n\n此为河北长城文化的数字化展陈——愿观者，皆能透过粒子与光影，读见山河背后那道从未散去的长城。"}};
+const $=id=>document.getElementById(id);
+const state=window.__siteRepair={backup:B,mode:'pending',config:{SITE_TEXT:B.text,DIGITAL_HUMANS:B.humans}};
+let page=0, person=null;
+const hide=(id,yes)=>$(id).classList.toggle('hidden',yes);
+state.note=(message='')=>{ $('repair-note').textContent=message;hide('repair-note',!message); };
+function phase(p){$('phase-prologue').classList.toggle('active',p==='prologue');$('phase-digital').classList.toggle('active',p==='digital');$('skip-btn').classList.toggle('active',p==='construction');$('back-to-construction').classList.toggle('active',p==='digital');$('slides').style.display=p==='construction'?'':'none';hide('global-loading',true);hide('repair-controls',p!=='construction');state.note(p==='construction'?'文字备用模式 · 原三维资源暂不可用':'');}
+function fill(i,lang='zh'){
+ const d=B.art[i-1][lang],el=$('at-'+i);el.querySelector('.a-title').textContent=d.title;el.querySelector('.a-sub').textContent=d.sub;el.querySelector('.a-desc').textContent=d.desc;el.querySelector('.a-desc').classList.toggle('en',lang==='en');el.querySelectorAll('.m-row').forEach((r,j)=>{r.querySelector('.m-key').textContent=d.meta[j][0];r.querySelector('.m-val').textContent=d.meta[j][1];});el.querySelectorAll('.lang-btn').forEach((b,j)=>b.classList.toggle('active',j===(lang==='zh'?0:1)));
+}
+function show(i){page=Math.max(0,Math.min(10,i));document.querySelectorAll('.slide').forEach((e,j)=>{e.classList.toggle('active',j===page);e.style.opacity='';});$('repair-page').textContent=`${page+1} / 11`;$('repair-prev').disabled=page===0;$('repair-next').textContent=page===10?'数字人':'下一页';if(page===0) ['t-zh','t-div','t-museum','t-hint'].forEach(id=>$(id)?.classList.add('show'));else if(page===10){$('f-label').classList.add('in');$('f-title').textContent=B.finale.title;$('f-sub').textContent=B.finale.sub;$('f-desc').textContent=B.finale.desc;$('f-div').classList.add('drawn');}else fill(page);}
+function dialog(h){person=h;$('dialog-title').textContent=(state.config.SITE_TEXT.dialogTitle||B.text.dialogTitle).replace('{name}',h.name);$('dialog-questions').replaceChildren();for(const q of h.exampleQuestions||[]){const li=document.createElement('li');li.textContent=q;$('dialog-questions').append(li);}const ok=!!h.viduUrl;$('dialog-enter').disabled=!ok;$('dialog-enter').textContent=ok?(state.config.SITE_TEXT.dialogEnter||B.text.dialogEnter):'实时对话链接暂不可用';$('dialog-desc').textContent=ok?(state.config.SITE_TEXT.dialogDesc||B.text.dialogDesc):'当前未取得原数字人实时服务链接，暂时仅展示原角色介绍。';$('dialog-overlay').classList.add('active');}
+function digital(){const wrap=$('digital-cards');wrap.replaceChildren();for(const h of state.config.DIGITAL_HUMANS){const card=document.createElement('div');card.className='human-card';const av=document.createElement('div');av.className='human-avatar';const letter=()=>{av.replaceChildren();const sp=document.createElement('span');sp.className='avatar-fallback';sp.textContent=h.name[0];av.append(sp);};if(h.avatarImage){const img=document.createElement('img');img.alt=h.name;img.onerror=letter;img.src=h.avatarImage;av.append(img);}else letter();card.append(av);for(const [key,cls] of [['name','human-name'],['role','human-role'],['location','human-location'],['description','human-desc']]){const el=document.createElement('div');el.className=cls;el.textContent=h[key]||'';card.append(el);}const btn=document.createElement('button');btn.className='human-talk-btn';btn.textContent=h.talkBtn||'查看介绍';btn.onclick=()=>dialog(h);card.append(btn);wrap.append(card);}phase('digital');}
+state.fallback=()=>{if(state.mode==='fallback')return;state.mode='fallback';$('slides').classList.add('repair-text');$('stage').style.display='none';$('music-btn').classList.add('hidden');window.switchLang=fill;phase('construction');show(0);$('repair-prev').onclick=()=>show(page-1);$('repair-next').onclick=()=>page===10?digital():show(page+1);$('skip-btn').onclick=digital;$('back-to-construction').onclick=()=>{phase('construction');show(0);};$('dialog-back').onclick=()=>$('dialog-overlay').classList.remove('active');$('dialog-enter').onclick=()=>{if(person?.viduUrl)window.open(person.viduUrl,'_blank','noopener,noreferrer');$('dialog-overlay').classList.remove('active');};};
+// 配置独立加载，即使 Three.js CDN 失败仍可读取数字人配置。
+state.configPromise=import('./config.js').then(c=>{state.config={SITE_TEXT:{...B.text,...c.SITE_TEXT},DIGITAL_HUMANS:Array.isArray(c.DIGITAL_HUMANS)?c.DIGITAL_HUMANS:B.humans};return c;}).catch(e=>{console.warn('[config]',e);return null;});
+let bootTimer, requested=false;
+$('quick-digital').addEventListener('click',()=>{
+ if(state.mode==='3d'){state.quickDigital();return;}
+ clearTimeout(bootTimer);requested=false;state.fallback();digital();
+});
+state.on3DReady=()=>{clearTimeout(bootTimer);if(requested){requested=false;$('start-btn').click();}};
+$('start-btn').addEventListener('click',e=>{
+ if(state.mode==='3d')return;
+ e.stopImmediatePropagation();
+ if(state.mode==='fallback'||requested){clearTimeout(bootTimer);state.fallback();return;}
+ requested=true;$('start-btn').textContent='准备三维展陈… 再点可跳过';
+ bootTimer=setTimeout(()=>{requested=false;if(state.mode!=='3d')state.fallback();},10000);
+},true);
+// 序章不依赖网络、模块或 WebGL；用户可立即进入文字备用模式。
+$('slides').style.display='none';$('music-btn').classList.add('hidden');
+})();
+</script>
 <script type="importmap">
 {
   "imports": {
@@ -809,7 +865,17 @@ html, body { width:100%; height:100%; overflow:hidden;
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { SITE_TEXT, DIGITAL_HUMANS } from './config.js';
+const repair = window.__siteRepair;
+let configTimer;
+const remoteConfig = await Promise.race([
+  repair.configPromise,
+  new Promise(resolve => { configTimer = setTimeout(() => resolve(null), 5000); })
+]);
+clearTimeout(configTimer);
+const SITE_TEXT = {...repair.backup.text, ...(remoteConfig?.SITE_TEXT || {})};
+const DIGITAL_HUMANS = Array.isArray(remoteConfig?.DIGITAL_HUMANS) ? remoteConfig.DIGITAL_HUMANS : repair.backup.humans;
+repair.config = {SITE_TEXT, DIGITAL_HUMANS};
+if (repair.mode === 'fallback') throw new Error('文字备用模式已启动，无需初始化 3D');
 
 // ═══════════════════════════ DATA (4 件长城主题文物 + Finale) ═══════════════════════════
 // 长城砖石 —— 青砖冷灰
@@ -1161,6 +1227,24 @@ const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/libs/draco/');
 loader.setDRACOLoader(dracoLoader);
+const MODEL_TIMEOUT = 240000; // 慢网允许完成，等待时保留动画及跳过入口
+function safeLoad(file, success, failure, progress = () => {}) {
+  const startedAt = performance.now();
+  progress({stage:"download", loaded:0, total:0});
+  let settled = false;
+  const fail = err => { if (settled) return; settled = true; clearTimeout(timer); console.warn('[模型加载失败]', file, err); failure(err); };
+  const timer = setTimeout(() => fail(new Error('模型加载超时')), MODEL_TIMEOUT);
+  try { loader.load(encodeURI(file), gltf => {
+    if (settled) { gltf.scene?.traverse(o=>{o.geometry?.dispose();}); return; }
+    try {
+      console.info("[长城性能] 下载及GLB解码", file, Math.round(performance.now()-startedAt), "ms");
+      progress({stage:"prepare"});
+      const t = performance.now();
+      success(gltf); settled = true; clearTimeout(timer);
+      console.info("[长城性能] 粒子及场景构建", file, Math.round(performance.now()-t), "ms");
+    } catch (err) { fail(err); }
+  }, evt => { if (!settled) progress({stage:"download",loaded:evt.loaded,total:evt.total||0}); }, fail); } catch(err) { fail(err); }
+}
 
 // ═══════════════════════════ UTILS ═══════════════════════════
 function pickCol(palette, nx, ny, nz) {
@@ -1200,6 +1284,9 @@ function extractVerts(root, maxCount=120000) {
   const rawCols = [];
   let hitTex = 0, hitVCol = 0, hitBase = 0;
   root.updateWorldMatrix(true, true);
+  let vertexCount = 0;
+  root.traverse(node => { if (node.isMesh) vertexCount += node.geometry?.attributes?.position?.count || 0; });
+  const sampleStride = Math.max(1, Math.ceil(vertexCount / maxCount));
   root.traverse(node => {
     if (!node.isMesh) return;
     node.updateWorldMatrix(true, false);
@@ -1210,7 +1297,7 @@ function extractVerts(root, maxCount=120000) {
     const tex = sampleTexture(mat);
     const base = (mat && mat.color) ? [mat.color.r, mat.color.g, mat.color.b] : [0.6, 0.60, 0.58];
     const wm = node.matrixWorld, v = new THREE.Vector3();
-    for (let i=0; i<pos.count; i++) {
+    for (let i=0; i<pos.count; i+=sampleStride) {
       v.fromBufferAttribute(pos, i).applyMatrix4(wm);
       raw.push(v.x, v.y, v.z);
       let cr=base[0], cg=base[1], cb=base[2];
@@ -1248,8 +1335,12 @@ function extractVerts(root, maxCount=120000) {
     if (raw[i+1]<mnY) mnY=raw[i+1]; if (raw[i+1]>mxY) mxY=raw[i+1];
     if (raw[i+2]<mnZ) mnZ=raw[i+2]; if (raw[i+2]>mxZ) mxZ=raw[i+2];
   }
+  const bounds = new THREE.Box3().setFromObject(root);
+  if (!bounds.isEmpty()) {
+    mnX=bounds.min.x; mxX=bounds.max.x; mnY=bounds.min.y; mxY=bounds.max.y; mnZ=bounds.min.z; mxZ=bounds.max.z;
+  }
   const cx=(mnX+mxX)/2, cy=(mnY+mxY)/2, cz=(mnZ+mxZ)/2;
-  const sc = 2.2 / Math.max(mxX-mnX, mxY-mnY, mxZ-mnZ);
+  const sc = 2.2 / (Math.max(mxX-mnX, mxY-mnY, mxZ-mnZ)||1);
   const stride = Math.max(1, Math.floor(raw.length/3/maxCount));
   const pts = [];
   const natCols = [];
@@ -1486,9 +1577,11 @@ class ArtifactScene {
     this.scene.add(this.pivot);
   }
 
-  load(cb) {
-    loader.load(encodeURI(this.data.file), gltf => {
+  load(cb, progress) {
+    safeLoad(this.data.file, gltf => {
+      if (this._disposed) return;
       const d = extractVerts(gltf.scene);
+      if (!d.pts.length) throw new Error("模型无有效顶点");
       const entryType = this.data.entryType;
       const stagger = computeStagger(d.pts, entryType, d);
       const initPos = computeInitPos(d.pts, entryType);
@@ -1590,7 +1683,7 @@ class ArtifactScene {
 
       this.ready = true;
       if (cb) cb();
-    }, null, err => console.error(err));
+    }, err => { this.failed = true; if (cb) cb(err); }, progress);
   }
 
   tick(dt) {
@@ -1772,8 +1865,10 @@ class FinaleScene {
     this.scene.add(hemi, key, fill);
 
     glbs.forEach((file, idx) => {
-      loader.load(encodeURI(file), gltf => {
+      safeLoad(file, gltf => {
+        if (this._disposed) return;
         const d = extractVerts(gltf.scene, 40000);
+        if (!d.pts.length) throw new Error("模型无有效顶点");
         const COUNT = d.pts.length/3;
         const targetPos = new Float32Array(d.pts);
         const curPos = new Float32Array(d.pts.length);
@@ -1847,7 +1942,7 @@ class FinaleScene {
         this.groups.push({g, targetPos, curPos, initPos, posAttr, stagger, mat, COUNT, meshRoot, meshMats});
         this.loaded++;
         if (this.loaded === glbs.length) { this.ready = true; if (cb) cb(); }
-      }, null, err => console.error(err));
+      }, err => { this.loaded++; this.failedCount = (this.failedCount || 0) + 1; if (this.loaded === glbs.length) { this.ready = true; if (cb) cb(); } });
     });
   }
 
@@ -1963,33 +2058,64 @@ const total = ARTIFACTS.length;   // 只统计文物，尾页延迟加载不计�
 let constructionStarted = false;   // 是否已开始加载构境层
 let constructionRunning = false;   // 渲染循环是否运行
 let autoPlay = false;              // 是否自动播放
-let autoTimer = null;              // 自动推进定时器
+let autoTimer = null;
+let generation = 0;
+let finaleWaitStart = 0;
+let firstStarted = false;
+let titleStartedAt = 0;
+let waitTicker = null;
+function modelStatus(s) {
+  const p = s.progress || {};
+  const elapsed = Math.floor((performance.now()-(s.startedAt||performance.now()))/1000);
+  if (p.stage === "prepare") return `正在生成三维粒子 · 已用 ${elapsed} 秒`;
+  const amount = p.total ? `${Math.min(100,Math.floor(p.loaded/p.total*100))}%` : p.loaded ? `${(p.loaded/1048576).toFixed(1)} MB` : "连接资源中";
+  return `正在准备三维模型 · ${amount} · 已用 ${elapsed} 秒`;
+}
+function refreshWait() {
+  if (!constructionRunning || transitioning) return;
+  const s=artScenes[Math.max(0,currentSlide-1)];
+  if (s && s._loading) repair.note(modelStatus(s));
+}
+function warmFirst() { if (!constructionStarted && repair.mode === "3d" && document.getElementById("phase-prologue").classList.contains("active")) loadArtifact(0); }
 
 // 点击「开始体验」后才加载 GLB 并启动渲染循环（让序章秒开）
 function startConstruction() {
   if (constructionStarted) return;
   constructionStarted = true;
   constructionRunning = true;
-  document.getElementById('global-loading').classList.remove('hidden');
-
-  frame();
-
-  // 只先加载第 1 件文物，其余按需预加载；尾页延迟到播放后期加载
+  document.getElementById('slides').style.display = '';
+  hideLoading();
+  firstStarted = false;
+  generation++; const g = generation;
+  titleStartedAt = performance.now();
+  startTitleAnim();
+  frame(g);
+  // 复用序章已启动的请求。开场动画不依赖GLB。
   loadArtifact(0);
+  clearInterval(waitTicker); waitTicker = setInterval(refreshWait, 500);
+  if (artScenes[0].ready || artScenes[0].failed) onFirstReady(); else refreshWait();
 }
 
 // 按需加载第 i 件文物（i 为 artScenes 索引）
 function loadArtifact(i) {
   if (i < 0 || i >= artScenes.length) return;
   const s = artScenes[i];
-  if (s.ready || s._loading) return;
+  if (s.ready || s.failed || s._loading) return;
   s._loading = true;
-  s.load(() => {
+  s.startedAt = performance.now();
+  s.load(err => {
     s._loading = false;
-    loaded++;
+    if (artScenes[i] !== s || s._disposed) return;
+    if (!err) loaded++;
     $loadStatus.textContent = `已加载 ${loaded}/${total}…`;
-    if (i === 0) onFirstReady();
-  });
+    if (!constructionRunning) return; // 序章预加载完成，点击后直接复用
+    if (i === 0 && currentSlide === 0) onFirstReady();
+    if (currentSlide === i + 1) {
+      if (!err && s.ready && s.active) s.enter();
+      repair.note(err ? "当前模型暂不可用 · 展陈文案仍可浏览" : "");
+      if (autoPlay) scheduleAutoAdvance();
+    }
+  }, p => { s.progress=p; if (constructionRunning && (currentSlide===i+1 || (currentSlide===0 && i===0))) refreshWait(); });
 }
 
 // 延迟加载尾页（3×3 网格），复用已缓存模型之外的独立加载
@@ -1997,18 +2123,19 @@ let finaleLoading = false;
 function loadFinale() {
   if (finaleScene.ready || finaleLoading) return;
   finaleLoading = true;
-  finaleScene.load(ARTIFACTS.map(a => a.file), () => { finaleLoading = false; });
+  const g = generation;
+  finaleScene.load(ARTIFACTS.map(a => a.file), () => { if (g===generation) finaleLoading = false; });
 }
 
 // 第 1 件文物就绪即可开播（不再等待全部 18 次加载）
 function onFirstReady() {
-  if (!constructionRunning) return;   // 用户已跳过/离开，忽略迟到的加载完成
-  const $gl = document.getElementById('global-loading');
-  $gl.classList.add('done');
-  setTimeout(() => { $gl.style.display = 'none'; }, 900);
-  startTitleAnim();
+  if (!constructionRunning || firstStarted) return;
+  firstStarted = true;
+  hideLoading();
+  repair.note(artScenes[0].ready ? '' : '首件模型尚未就绪 · 将继续展陈');
   autoPlay = true;
-  scheduleAutoAdvance();
+  const g = generation;
+  autoTimer = setTimeout(() => { if (g===generation && constructionRunning && autoPlay) gotoSlide(1); }, Math.max(0, AUTO_DURATION[0] - (performance.now() - titleStartedAt)));
 }
 
 function startTitleAnim() {
@@ -2024,7 +2151,9 @@ const AUTO_DURATION = [4600, 9500, 9500, 9500, 9500, 9500, 9500, 9500, 9500, 950
 
 function scheduleAutoAdvance() {
   if (!autoPlay) return;
-  clearTimeout(autoTimer);
+  clearTimeout(autoTimer); autoTimer=null;
+  // 慢模型未完成时不自动跳到下一件，加载成功后重新计算完整播放时长。
+  if (currentSlide >= 1 && currentSlide <= 9 && artScenes[currentSlide-1]._loading) return;
   const hold = AUTO_DURATION[currentSlide] || 9500;
   autoTimer = setTimeout(() => {
     if (!autoPlay) return;
@@ -2032,7 +2161,7 @@ function scheduleAutoAdvance() {
       showTransition();
     } else {
       const next = currentSlide + 1;
-      if (next === 10) enterFinaleWhenReady();
+      if (next === 10) { finaleWaitStart = Date.now(); enterFinaleWhenReady(); }
       else gotoSlide(next);
     }
   }, hold);
@@ -2041,7 +2170,7 @@ function scheduleAutoAdvance() {
 // 进入尾页前确保 3×3 网格模型已就绪，未就绪则短间隔重试
 function enterFinaleWhenReady() {
   if (!autoPlay) return;
-  if (finaleScene.ready) { gotoSlide(10); return; }
+  if (finaleScene.ready || Date.now() - finaleWaitStart >= 5000) { gotoSlide(10); return; }
   autoTimer = setTimeout(enterFinaleWhenReady, 600);
 }
 
@@ -2051,7 +2180,9 @@ function showTransition() {
   clearTimeout(autoTimer);
   document.getElementById('skip-btn').classList.remove('active');
   document.getElementById('transition-overlay').classList.add('active');
+  const g = generation;
   setTimeout(() => {
+    if(g!==generation || !constructionRunning) return;
     document.getElementById('transition-overlay').classList.remove('active');
     disposeConstruction();
     showPhase('digital');
@@ -2069,6 +2200,10 @@ function skipToDigital() {
 // ── 卸载 3D 渲染循环与 GPU 资源 ──
 function disposeConstruction() {
   constructionRunning = false;
+  clearInterval(waitTicker); waitTicker=null;
+  generation++;
+  artScenes.forEach(s => s._disposed = true); finaleScene._disposed = true;
+  repair.note();
   clearTimers();
   try {
     const disposeRoot = root => {
@@ -2166,6 +2301,7 @@ function gotoSlide(n) {
   if (n === currentSlide) return;
   transitioning = true;
 
+  const g = generation;
   const prev = currentSlide;
   const prevSlideEl = document.getElementById(`slide-${prev}`);
 
@@ -2178,11 +2314,13 @@ function gotoSlide(n) {
   prevSlideEl.style.opacity = '0';
 
   setTimeout(() => {
+    if (g!==generation || !constructionRunning) return;
     prevSlideEl.classList.remove('active');
     prevSlideEl.style.opacity = '';
     prevSlideEl.style.transition = '';
 
     currentSlide = n;
+    repair.note(n>=1 && n<=9 && !artScenes[n-1].ready ? "当前模型尚未就绪 · 展陈文案仍可浏览" : n===10 && (!finaleScene.ready || finaleScene.failedCount) ? "部分模型暂不可用 · 展陈文案仍可浏览" : "");
     const nextEl = document.getElementById(`slide-${n}`);
     nextEl.classList.add('active');
 
@@ -2190,6 +2328,7 @@ function gotoSlide(n) {
       titleScene.enter();
     } else if (n >= 1 && n <= 9) {
       const sc = artScenes[n-1];
+      loadArtifact(n-1);
       sc.enter();
       // 流水线预加载：进入第 n 件时后台加载下一件；第 8 件起同时加载尾页
       if (n < 9) loadArtifact(n);
@@ -2199,15 +2338,17 @@ function gotoSlide(n) {
         const sorted = Array.from(sc._stagger).sort((a,b) => a-b);
         textDelay = sorted[Math.floor(sc._COUNT * 0.6)] * 1000 + 300;
       }
-      setTimeout(() => runArtSequence(n, slideLangs[n] || 'zh'), textDelay);
+      setTimeout(() => { if(g===generation && currentSlide===n && constructionRunning) runArtSequence(n, slideLangs[n] || 'zh'); }, textDelay);
     } else if (n === 10) {
       finaleScene.enter();
-      setTimeout(() => runFinaleSequence(), 2200);
+      setTimeout(() => { if(g===generation && currentSlide===10 && constructionRunning) runFinaleSequence(); }, 2200);
     }
 
     document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === n));
     if (autoPlay) scheduleAutoAdvance();
-    setTimeout(() => { transitioning = false; }, 950);
+    setTimeout(() => { if(g===generation) { transitioning = false;
+      if (currentSlide>=1 && currentSlide<=9 && artScenes[currentSlide-1].ready && !autoTimer && autoPlay) scheduleAutoAdvance();
+    } }, 950);
   }, dissipDur + 80);
 }
 
@@ -2256,7 +2397,12 @@ async function runArtSequence(slideIdx, lang) {
     r.querySelector('.m-val').textContent = '';
   });
   $langRow.classList.remove('in');
-
+  if (!artScenes[slideIdx-1].ready) {
+    $label.style.opacity='1'; $title.textContent=d.title; $sub.textContent=d.sub;
+    lines.forEach(l=>l.classList.add('drawn'));
+    rows.forEach((r,i)=>{r.classList.add('in');r.querySelector('.m-key').textContent=d.meta[i][0];r.querySelector('.m-val').textContent=d.meta[i][1];});
+    $desc.className=lang==='en'?'a-desc en':'a-desc';$desc.textContent=d.desc;$desc.style.whiteSpace='pre-line';$langRow.classList.add('in');return;
+  }
   $label.style.transition = 'opacity 1s'; await wait(100);
   $label.style.opacity = '1';
   await wait(500);
@@ -2330,6 +2476,7 @@ document.getElementById('dialog-enter').textContent = SITE_TEXT.dialogEnter;
 
 // 渲染数字人卡片
 const cardsWrap = document.getElementById('digital-cards');
+cardsWrap.replaceChildren();
 DIGITAL_HUMANS.forEach(h => {
   const card = document.createElement('div');
   card.className = 'human-card';
@@ -2346,6 +2493,8 @@ DIGITAL_HUMANS.forEach(h => {
     <div class="human-desc">${h.description}</div>
     <button class="human-talk-btn">${h.talkBtn}</button>
   `;
+  const img = card.querySelector('img');
+  if (img) img.addEventListener('error', () => { const span=document.createElement('span'); span.className='avatar-fallback'; span.textContent=h.name[0]; img.replaceWith(span); });
   card.querySelector('.human-talk-btn').addEventListener('click', () => openDialog(h));
   cardsWrap.appendChild(card);
 });
@@ -2357,11 +2506,15 @@ function openDialog(h) {
   document.getElementById('dialog-title').textContent = SITE_TEXT.dialogTitle.replace('{name}', h.name);
   const list = document.getElementById('dialog-questions');
   list.innerHTML = '';
-  h.exampleQuestions.forEach(q => {
+  (h.exampleQuestions || []).forEach(q => {
     const li = document.createElement('li');
     li.textContent = q;
     list.appendChild(li);
   });
+  const enter = document.getElementById('dialog-enter');
+  enter.disabled = !h.viduUrl;
+  enter.textContent = h.viduUrl ? SITE_TEXT.dialogEnter : '实时对话链接暂不可用';
+  document.getElementById('dialog-desc').textContent = h.viduUrl ? SITE_TEXT.dialogDesc : '当前未取得原数字人实时服务链接，暂时仅展示原角色介绍。';
   document.getElementById('dialog-overlay').classList.add('active');
 }
 function closeDialog() {
@@ -2370,7 +2523,7 @@ function closeDialog() {
 document.getElementById('dialog-back').addEventListener('click', closeDialog);
 document.getElementById('dialog-enter').addEventListener('click', () => {
   if (currentHuman && currentHuman.viduUrl) {
-    window.open(currentHuman.viduUrl, '_blank');
+    window.open(currentHuman.viduUrl, '_blank', 'noopener,noreferrer');
   }
   closeDialog();
 });
@@ -2380,12 +2533,14 @@ document.getElementById('dialog-overlay').addEventListener('click', e => {
 
 // 开始体验
 document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('slides').style.display = '';
   showPhase('construction');
   startConstruction();
 });
 
 // 跳过
 document.getElementById('skip-btn').addEventListener('click', skipToDigital);
+repair.quickDigital = skipToDigital;
 
 // 返回长城构境（重建场景并从头播放）
 document.getElementById('back-to-construction').addEventListener('click', resetConstruction);
@@ -2397,7 +2552,7 @@ const MUSIC_SWITCH_AT = 131;   // 第一首播放到 2 分 11 秒后切换到第
 
 const bgm = new Audio();
 bgm.src = MUSIC_TRACK_1;
-bgm.preload = 'auto';
+bgm.preload = 'none';
 bgm.loop = false;
 let bgmSwitched = false;
 
@@ -2440,9 +2595,9 @@ refreshMusicBtn();
 
 // ═══════════════════════════ MAIN LOOP ═══════════════════════════
 let last = performance.now();
-function frame() {
-  if (!constructionRunning) return;
-  requestAnimationFrame(frame);
+function frame(g) {
+  if (!constructionRunning || g!==generation) return;
+  requestAnimationFrame(() => frame(g));
   const now = performance.now();
   const dt = Math.min((now - last)/1000, 0.05);
   last = now;
@@ -2488,7 +2643,16 @@ function frame() {
 addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
 });
+// 首次进入时显式显示序章，隐藏加载遮罩。
+showPhase('prologue');
+hideLoading();
+repair.mode = '3d';
+$musicBtn.classList.remove('hidden');
+repair.on3DReady();
+setTimeout(warmFirst, 50);
 </script>
 
-</body>
-</html>
+
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","spa":2}' crossorigin="anonymous"></script>
+</body></html>
