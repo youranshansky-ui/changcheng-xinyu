@@ -3,7 +3,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>长城·龙魂 · 山海关砖石间的巨龙</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<meta name="site-version" content="5.0-local-3d">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { width:100%; height:100%; overflow:hidden;
@@ -846,8 +846,8 @@ $('start-btn').addEventListener('click',e=>{
  if(state.mode==='3d')return;
  e.stopImmediatePropagation();
  if(state.mode==='fallback'||requested){clearTimeout(bootTimer);state.fallback();return;}
- requested=true;$('start-btn').textContent='准备三维展陈… 再点可跳过';
- bootTimer=setTimeout(()=>{requested=false;if(state.mode!=='3d')state.fallback();},10000);
+ requested=true;$('start-btn').textContent='正在准备三维引擎… 再点可浏览文字版';
+ bootTimer=setTimeout(()=>{requested=false;if(state.mode!=='3d')state.fallback();},25000);
 },true);
 // 序章不依赖网络、模块或 WebGL；用户可立即进入文字备用模式。
 $('slides').style.display='none';$('music-btn').classList.add('hidden');
@@ -856,8 +856,8 @@ $('slides').style.display='none';$('music-btn').classList.add('hidden');
 <script type="importmap">
 {
   "imports": {
-    "three":         "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/"
+    "three":         "./vendor/three/build/three.module.js",
+    "three/addons/": "./vendor/three/examples/jsm/"
   }
 }
 </script>
@@ -1225,7 +1225,7 @@ renderer.toneMappingExposure = 1.0;
 
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/libs/draco/');
+dracoLoader.setDecoderPath('./vendor/three/examples/jsm/libs/draco/');
 loader.setDRACOLoader(dracoLoader);
 const MODEL_TIMEOUT = 240000; // 慢网允许完成，等待时保留动画及跳过入口
 function safeLoad(file, success, failure, progress = () => {}) {
@@ -2654,5 +2654,4 @@ setTimeout(warmFirst, 50);
 
 
 
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","spa":2}' crossorigin="anonymous"></script>
 </body></html>
